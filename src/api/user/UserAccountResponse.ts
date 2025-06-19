@@ -57,7 +57,7 @@ export interface Profile {
 }
 
 // 主接口类型
-export interface UserResponse {
+export interface UserAccountResponse {
     code: number;
     account: Account;
     profile: Profile;
