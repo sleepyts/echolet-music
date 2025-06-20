@@ -1,6 +1,7 @@
 import type {SongDetailResponse} from "./SongDetailResponse.ts";
 import http from "../http.ts";
 import type {MusicDataResponse} from "./MusicDataResponse.ts";
+import type {LyricData} from "./SongLyricResponse.ts";
 
 
 /**
@@ -26,6 +27,19 @@ export async function getMusicData(ids: number[], level: string = "standard"): P
         params: {
             id: ids.join(","),
             level: level,
+        },
+    })
+}
+
+/**
+ * 获取歌词
+ * @param id 歌曲id
+ * @see LyricData
+ */
+export async function getLyric(id: number): Promise<LyricData> {
+    return http.get("/lyric", {
+        params: {
+            id: id,
         },
     })
 }

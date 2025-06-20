@@ -1,8 +1,10 @@
 import {create} from "zustand";
 
-import {getMusicData, getSongDetail} from "../api/track/songApis.ts";
+import {getLyric, getMusicData, getSongDetail} from "../api/track/songApis.ts";
 import type {Song} from "../api/track/SongDetailResponse.ts";
 import {persist, type PersistOptions} from "zustand/middleware";
+import type {LyricLine} from "../api/track/SongLyricResponse.ts";
+import {parseLrc} from "../utils/MusicDataUtil.ts";
 
 export const GlobalAudio = new Audio();
 
@@ -20,6 +22,17 @@ interface MusicState {
     currentMusicData: Song | undefined;
 
     currentMusicIds: number[] | undefined;
+
+    lyric: LyricLine[] | undefined;
+
+    tlyric: LyricLine[] | undefined;
+
+    romalyric: LyricLine[] | undefined;
+
+
+    currentLyricIndex: number | undefined;
+
+
 }
 
 
@@ -29,6 +42,8 @@ interface MusicAction {
     setCurrentPlaylistId: (id: number) => void;
 
     setCurrentMusicIds: (ids: number[]) => void;
+
+    getLyric: () => void;
 }
 
 interface AudioState {
@@ -86,6 +101,17 @@ function nextPlayMode(mode: PlayMode) {
     }
 }
 
+/**
+ * 根据当前播放时间从 {time, text} 数据结构中获取当前歌词索引
+ * @param lyric
+ * @param currentTime
+ */
+function getRencentLyricIndex(lyric: LyricLine[], currentTime: number): number {
+    return lyric.findIndex((line, i) => {
+        return currentTime <= line.time && (i === 0 || currentTime >= lyric[i - 1].time);
+    }) - 1;
+
+}
 
 type FullState = MusicState & MusicAction & AudioAction & AudioState;
 type MyPersist = PersistOptions<FullState>;
@@ -101,6 +127,37 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
             volume: 1,
             currentMusicIds: undefined,
             playMode: PlayMode.REPEAT,
+            lyric: undefined,
+            tlyric: undefined,
+            romalyric: undefined,
+            currentLyricIndex: undefined,
+
+            getLyric: () => {
+
+                const currentMusicData = get().currentMusicData;
+                if (!currentMusicData) return;
+                getLyric(currentMusicData.id).then((lyric) => {
+                    const lrc = lyric.lrc;
+                    const tlyric = lyric.tlyric;
+                    const romalrc = lyric.romalrc;
+                    if (lrc.lyric !== '') {
+                        set(() => ({
+                            lyric: parseLrc(lrc.lyric)
+                        }))
+                    }
+                    if (tlyric.lyric !== '') {
+                        set(() => ({
+                            tlyric: parseLrc(tlyric.lyric)
+                        }))
+                    }
+                    if (romalrc.lyric !== '') {
+                        set(() => ({
+                            romalyric: parseLrc(romalrc.lyric)
+                        }))
+                    }
+                    console.log(get().lyric)
+                });
+            },
 
             changeVolume: (volume: number) => {
                 GlobalAudio.volume = volume
@@ -122,6 +179,7 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                     GlobalAudio.load()
                     GlobalAudio.pause()
                     GlobalAudio.currentTime = get().currentTime
+                    GlobalAudio.volume = get().volume
                     get().onTimeUpdate()
                     get().onEnd()
                 })
@@ -138,6 +196,16 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                     set(() => ({
                         currentTime: GlobalAudio.currentTime,
                     }))
+                    const lyric = get().lyric
+                    const currentTime = get().currentTime
+                    if (lyric != undefined) {
+                        const rencentLyricIndex = getRencentLyricIndex(lyric, currentTime);
+                        if (rencentLyricIndex >= 0 && rencentLyricIndex != get().currentLyricIndex) {
+                            set(() => ({
+                                currentLyricIndex: rencentLyricIndex
+                            }))
+                        }
+                    }
                 }
             },
             setCurrentMusicData: (newData: Song) => {
@@ -190,6 +258,7 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                     GlobalAudio.src = url
                     GlobalAudio.load()
                     GlobalAudio.play().then(() => {
+                        get().getLyric()
                         set(() => ({
                             currentTime: GlobalAudio.currentTime,
                             duration: GlobalAudio.duration,
@@ -252,6 +321,10 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                 paused: true,
                 volume: state.volume,
                 playMode: state.playMode,
+                lyric: state.lyric,
+                tlyric: state.tlyric,
+                romalyric: state.romalyric,
+                currentLyricIndex: state.currentLyricIndex,
             })
         }
     )
