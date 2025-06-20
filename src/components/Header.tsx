@@ -1,12 +1,10 @@
 import {Box, IconButton, Stack} from "@mui/material";
-import {useThemeStore} from "../store/ThemeStore.ts";
 import {DarkModeOutlined, LightModeOutlined, SettingsOutlined} from '@mui/icons-material';
 import {t} from "i18next";
+import {darkTheme, lightTheme} from "../theme/theme.ts";
 
-export function Header() {
+export function Header({theme, setTheme}: any) {
 
-    const mode = useThemeStore((state) => state.mode);
-    const changeTheme = useThemeStore((state) => state.changeTheme);
 
     return <Box display={"flex"} p={2}>
         <Stack spacing={2} direction={"row"} position={"absolute"} left={'50%'} sx={{transform: 'translateX(-50%)'}}>
@@ -14,10 +12,10 @@ export function Header() {
 
         <Stack spacing={1} direction={"row"} ml={"auto"}>
             <IconButton
-                title={mode === 'light' ? t('dark-mode') : t('light-mode')}
+                title={theme == lightTheme ? t('dark-mode') : t('light-mode')}
                 onClick={() => {
-                    changeTheme()
-                }}>{mode === "light" ? <DarkModeOutlined/> : <LightModeOutlined/>}</IconButton>
+                    setTheme(theme == lightTheme ? darkTheme : lightTheme)
+                }}>{theme == lightTheme ? <DarkModeOutlined/> : <LightModeOutlined/>}</IconButton>
             <IconButton>
                 <SettingsOutlined/>
             </IconButton>
