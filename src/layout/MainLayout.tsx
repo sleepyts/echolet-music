@@ -6,7 +6,7 @@ import {collapsedWidth, drawerWidth, LeftDrawer} from "../components/LeftDrawer.
 import { Outlet } from 'react-router-dom';
 
 export function MainLayout() {
-    const [openDrawer, setOpenDrawer] = React.useState(false);
+    const [openDrawer, setOpenDrawer] = React.useState(true);
 
     return (
         <>

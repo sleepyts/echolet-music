@@ -3,6 +3,8 @@ import {PanelLeftOpen, PanelRightOpen} from "lucide-react";
 import {useEffect, useState} from "react";
 import {getUserPlaylistInfo} from "../api/playlist/playListApis.ts";
 import type {Playlist} from "../api/playlist/PlaylistInfoResponse.ts";
+import {useMusicStore} from "../store/MusicStore.ts";
+import {useNavigate} from "react-router-dom";
 
 
 export const drawerWidth = 240;
@@ -15,11 +17,13 @@ interface LeftDrawerProps {
 
 
 export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
+    const navigate = useNavigate();
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
+    const setCurrentPlaylistId = useMusicStore((state) => state.setCurrentPlaylistId)
     useEffect(() => {
         getUserPlaylistInfo(430820620).then(res => {
             setPlaylists(res.playlist)
-            console.log(playlists)
         })
     }, []);
     return (
@@ -65,8 +69,8 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                     playlists.map(playlist => (
                         <ListItem key={playlist.id}
                                   sx={{p: 0}}
-                                  onClick={() => {
-                                  }}>
+                                  title={playlist.name}
+                        >
                             <ToggleButton
                                 sx={{
                                     p: 0.5,
@@ -77,10 +81,15 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                                     '&.Mui-selected': {},
                                 }}
                                 value={playlist.id}
+                                selected={currentPlaylistId === playlist.id}
+                                onClick={() => {
+                                    setCurrentPlaylistId(playlist.id)
+                                    navigate('/playlist/' + playlist.id)
+                                }}
                             >
                                 <Avatar src={playlist.coverImgUrl} variant={"rounded"}/>
                                 {open && <Typography variant={"body2"} textTransform={"none"}
-                                                     ml={2}>{playlist.name}</Typography>}
+                                                     ml={2} noWrap={true}>{playlist.name}</Typography>}
                             </ToggleButton>
                         </ListItem>
                     ))
