@@ -1,5 +1,6 @@
 {
   "light-mode": "浅色模式",
   "dark-mode": "深色模式",
-  "song-count":"首歌曲"
+  "song-count":"首歌曲",
+  "playlists": "歌单列表"
 }

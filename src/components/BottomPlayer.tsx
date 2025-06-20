@@ -1,8 +1,9 @@
 // src/components/GlobalPlayer.tsx
-import {Box, IconButton, Slider, Typography} from '@mui/material';
+import {Box, Slider, Typography} from '@mui/material';
 import {Pause, PlayArrow, SkipNext, SkipPrevious} from '@mui/icons-material';
 import {useMusicStore} from "../store/MusicStore.ts";
 import {fromSstoTime} from "../utils/MusicDataUtil.ts";
+import RoundedIconButton from "./RoundedIconButton.tsx";
 
 function GlobalPlayer() {
     const currentSong = useMusicStore(state => state.currentMusicData);
@@ -36,22 +37,16 @@ function GlobalPlayer() {
                     </Box>
                 </Box>
                 <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} flex={2}>
-                    <Box sx={{display: 'flex', flexDirection: 'row'}}>
-                        <IconButton>
-                            <SkipPrevious onClick={() => {
-                                playPrev()
-                            }}/>
-                        </IconButton>
-                        <IconButton onClick={() => {
+                    <Box sx={{display: 'flex', flexDirection: 'row', gap: 2, alignItems: 'center'}}>
+                        <RoundedIconButton icon={<SkipPrevious/>} onClick={() => {
+                            playPrev()
+                        }}/>
+                        <RoundedIconButton icon={paused ? <PlayArrow/> : <Pause/>} onClick={() => {
                             pauseOrPlay()
-                        }}>
-                            {!paused ? <Pause/> : <PlayArrow/>}
-                        </IconButton>
-                        <IconButton onClick={() => {
+                        }}/>
+                        <RoundedIconButton icon={<SkipNext/>} onClick={() => {
                             playNext()
-                        }}>
-                            <SkipNext/>
-                        </IconButton>
+                        }}/>
                     </Box>
                     <Box sx={{display: 'flex', flexDirection: 'row', width: '50%', alignItems: 'center'}}>
                         <Typography sx={{mr: 1, fontSize: 12}}>{fromSstoTime(currentTime)}</Typography>
@@ -100,7 +95,8 @@ function GlobalPlayer() {
                 </Box>
             </Box>
         </Box>
-    );
+    )
+        ;
 }
 
 

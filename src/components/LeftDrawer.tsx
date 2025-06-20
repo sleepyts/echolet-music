@@ -5,6 +5,7 @@ import {getUserPlaylistInfo} from "../api/playlist/playListApis.ts";
 import type {Playlist} from "../api/playlist/PlaylistInfoResponse.ts";
 import {useMusicStore} from "../store/MusicStore.ts";
 import {useNavigate} from "react-router-dom";
+import {t} from "i18next";
 
 
 export const drawerWidth = 240;
@@ -34,7 +35,18 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                 p: 1
             }
         }}>
-            <Box sx={{display: 'flex', alignItems: 'center', p: 0.5}}>
+
+
+            <Box height={'5rem'} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center',}}>
+                {
+                    open &&
+                    <Typography variant={"h6"}>
+                        Azure Music
+                    </Typography>
+                }
+            </Box>
+
+            <Box sx={{display: 'flex', alignItems: 'center', p: 0.5,ml: 1.2}}>
                 <ButtonBase
                     onClick={() => setOpen(!open)}
                     sx={{
@@ -49,7 +61,7 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                 <Typography
                     variant="body1"
                     sx={{
-                        ml: 2,
+                        ml: 3,
                         opacity: open ? 1 : 0,
                         transition: 'opacity 0.3s ease',
                         width: open ? 'auto' : 0,
@@ -57,7 +69,7 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    歌单列表
+                    {t('playlists')}
                 </Typography>
             </Box>
             <List sx={{
