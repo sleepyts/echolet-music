@@ -140,22 +140,23 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                     const lrc = lyric.lrc;
                     const tlyric = lyric.tlyric;
                     const romalrc = lyric.romalrc;
-                    if (lrc.lyric !== '') {
+                    if (lrc && lrc.lyric !== '') {
                         set(() => ({
                             lyric: parseLrc(lrc.lyric)
                         }))
                     }
-                    if (tlyric.lyric !== '') {
+                    if (tlyric && tlyric.lyric !== '') {
                         set(() => ({
                             tlyric: parseLrc(tlyric.lyric)
                         }))
                     }
-                    if (romalrc.lyric !== '') {
+                    if (romalrc && romalrc.lyric !== '') {
                         set(() => ({
                             romalyric: parseLrc(romalrc.lyric)
                         }))
                     }
-                    console.log(get().lyric)
+
+                    console.log(get().romalyric)
                 });
             },
 
@@ -233,6 +234,11 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                     currentTime: 0,
                     duration: 0,
                     paused: true,
+                    lyric: undefined,
+                    tlyric: undefined,
+                    romalyric: undefined,
+                    currentLyricIndex: undefined,
+
                 }))
             },
             pauseOrPlay: () => {

@@ -143,7 +143,7 @@ function MusicLyric() {
                     width: '100%',
                     m: 'auto 0'
                 }}>
-                {lyric && lyric.map(({time, text},index) => {
+                {lyric && lyric.map(({time, text}, index) => {
                     const isActive = currentLyricIndex !== undefined && currentLyricIndex === index;
 
                     return (
@@ -211,14 +211,12 @@ function MusicLyric() {
             </Box>
 
             <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                mt: 2,
-                height: '100%'
+                position: 'fixed',
+                right: 0,
+                top: '50%',
+                p: 1
             }}>
-                {rlyric && (
+                {rlyric && rlyric.length > 0 && (
                     <RoundedIconButton title={t('show-roma-lyrics')}
                                        icon={showRoma ? <FontDownload/> : <FontDownloadOutlined/>} onClick={() => {
                         setShowRoma(!showRoma)
