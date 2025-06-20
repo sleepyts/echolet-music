@@ -65,12 +65,14 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
     const start = useMusicStore((state) => state.start)
     const currentMusicData = useMusicStore((state) => state.currentMusicData)
+    const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds)
     const [, setVisibleIds] = useState<number[]>([]);
     const [dataList, setDataList] = useState<Song[]>([]);
 
     useEffect(() => {
         if (seriesIds.length === 0) return;
 
+        setCurrentMusicIds(seriesIds);
         fetchDataByIds(seriesIds).then(data => {
             setDataList(data);
             setVisibleIds(seriesIds);
@@ -98,7 +100,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                   size={"small"}
                                   selected={currentMusicData?.id === item.id}
                                   onDoubleClick={
-                                      () => {
+                                      async () => {
                                           setCurrentMusicData(item)
                                           start()
                                       }
@@ -133,7 +135,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                             alignItems: 'center',
                             flex: 1
                         }}>
-                            <Typography variant="body2" color={"text.secondary"} noWrap>
+                            <Typography variant="body2" color={"textPrimary"} noWrap>
                                 {fromMsToTime(item.dt)}
                             </Typography>
                         </Box>

@@ -3,11 +3,13 @@ import React from 'react';
 import {Box} from '@mui/material';
 import {Header} from "../components/Header.tsx";
 import {collapsedWidth, drawerWidth, LeftDrawer} from "../components/LeftDrawer.tsx";
-import { Outlet } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
+import GlobalPlayer from "../components/BottomPlayer.tsx";
+import {useMusicStore} from "../store/MusicStore.ts";
 
 export function MainLayout() {
     const [openDrawer, setOpenDrawer] = React.useState(true);
-
+    const currentSong = useMusicStore(state => state.currentMusicData);
     return (
         <>
             <LeftDrawer open={openDrawer} setOpen={setOpenDrawer}/>
@@ -20,8 +22,14 @@ export function MainLayout() {
                     }),
             }}>
                 <Header/>
-                <Outlet/>
+                <Box sx={{
+                    mb: currentSong === null ? 0 : '6rem'
+                }}>
+                    <Outlet/>
+
+                </Box>
             </Box>
+            <GlobalPlayer/>
 
         </>
     );

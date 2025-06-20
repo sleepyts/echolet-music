@@ -1,10 +1,6 @@
 import {Box, IconButton, Stack} from "@mui/material";
 import {useThemeStore} from "../store/ThemeStore.ts";
-import {
-    DarkModeOutlined,
-    LightModeOutlined,
-    SettingsOutlined
-} from '@mui/icons-material';
+import {DarkModeOutlined, LightModeOutlined, SettingsOutlined} from '@mui/icons-material';
 import {t} from "i18next";
 
 export function Header() {
