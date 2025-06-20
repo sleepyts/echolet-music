@@ -1,9 +1,22 @@
 // src/components/GlobalPlayer.tsx
-import {Box, Slider, Typography} from '@mui/material';
-import {Pause, PlayArrow, SkipNext, SkipPrevious} from '@mui/icons-material';
-import {useMusicStore} from "../store/MusicStore.ts";
+import {Box, Slider, Stack, Typography} from '@mui/material';
+import {
+    ArrowUpward, KeyboardArrowUp,
+    Pause,
+    PlayArrow,
+    Repeat,
+    RepeatOne,
+    Shuffle,
+    SkipNext,
+    SkipPrevious,
+    VolumeDown,
+    VolumeOff
+} from '@mui/icons-material';
+import {PlayMode, useMusicStore} from "../store/MusicStore.ts";
 import {fromSstoTime} from "../utils/MusicDataUtil.ts";
 import RoundedIconButton from "./RoundedIconButton.tsx";
+import {SliderStyles} from "../css/CommonStyle.ts";
+import {useState} from "react";
 
 function GlobalPlayer() {
     const currentSong = useMusicStore(state => state.currentMusicData);
@@ -24,8 +37,8 @@ function GlobalPlayer() {
             backgroundColor: (theme) => theme.palette.background.default,
             zIndex: (theme) => theme.zIndex.drawer,
         }}>
-            <Box padding={2} sx={{display: 'flex', alignItems: 'center'}}>
-                <Box sx={{display: 'flex', alignItems: 'center'}} flex={0.5}>
+            <Box padding={2} sx={{display: 'flex', alignItems: 'center',width:'80%',m: 'auto'}}>
+                <Box sx={{display: 'flex', alignItems: 'center'}} flex={1}>
                     <img src={currentSong?.al.picUrl} alt={currentSong?.name} width={64} height={64}/>
                     <Box sx={{display: 'flex', flexDirection: 'column'}}>
                         <Typography sx={{marginLeft: 2, fontSize: 12}}>{currentSong?.name}</Typography>
@@ -36,7 +49,7 @@ function GlobalPlayer() {
                             }}><a>{currentSong?.ar.map(a => a.name).join(' / ')}</a></Typography>
                     </Box>
                 </Box>
-                <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} flex={2}>
+                <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} flex={4}>
                     <Box sx={{display: 'flex', flexDirection: 'row', gap: 2, alignItems: 'center'}}>
                         <RoundedIconButton icon={<SkipPrevious/>} onClick={() => {
                             playPrev()
@@ -59,39 +72,14 @@ function GlobalPlayer() {
                             onChange={(_e, newValue) => {
                                 seek(newValue);
                             }}
-                            sx={{
-                                width: '100%',
-                                '& .MuiSlider-track': {
-                                    border: 'none',
-                                    borderRadius: 2,
-                                },
-                                '& .MuiSlider-rail': {
-                                    opacity: 0.3,
-                                    borderRadius: 2,
-                                },
-                                '&:hover .MuiSlider-thumb': {
-                                    width: 6,
-                                    height: 6,
-                                },
-                                '& .MuiSlider-thumb': {
-                                    width: 0,
-                                    height: 0,
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                    transition: 'width 0.2s ease, height 0.2s ease, box-shadow 0.3s ease',
-                                    '&:hover, &.Mui-focusVisible, &.Mui-active': {
-                                        width: 6,
-                                        height: 6,
-                                        boxShadow: '0 4px 8px rgba(0,0,0,0.4)',
-                                    },
-                                    '&::before': {
-                                        display: 'none',
-                                    },
-                                },
-                            }}
+                            sx={SliderStyles}
                         />
 
                         <Typography sx={{ml: 1, fontSize: 12}}>{fromSstoTime(duration)}</Typography>
                     </Box>
+                </Box>
+                <Box flex={1}>
+                    <RightControl/>
                 </Box>
             </Box>
         </Box>
@@ -99,5 +87,43 @@ function GlobalPlayer() {
         ;
 }
 
+function RightControl() {
+    const playMode = useMusicStore(state => state.playMode);
+    const changePlayMode = useMusicStore(state => state.changePlayMode);
+    const volume = useMusicStore(state => state.volume);
+    const changeVolume = useMusicStore(state => state.changeVolume);
+
+    const [prevVolume, setPrevVolume] = useState(1)
+    return <>
+        <Stack direction="row" spacing={2}>
+            <RoundedIconButton
+                icon={playMode === PlayMode.SHUFFLE ? <Shuffle/> : playMode === PlayMode.REPEAT ? <Repeat/> :
+                    <RepeatOne/>} onClick={() => {
+                changePlayMode()
+            }}/>
+            <RoundedIconButton icon={volume === 0 ? <VolumeOff/> : <VolumeDown/>} onClick={() => {
+                if (volume > 0) {
+                    changeVolume(0);
+                } else {
+                    changeVolume(prevVolume);
+                }
+            }}/>
+            <Slider
+                size="small"
+                aria-label="audio progress"
+                min={0}
+                step={0.01}
+                value={volume}
+                max={1}
+                onChange={(_e, newValue) => {
+                    setPrevVolume(volume);
+                    changeVolume(newValue);
+                }}
+                sx={SliderStyles}
+            />
+            <RoundedIconButton icon={<KeyboardArrowUp/>}/>
+        </Stack>
+    </>
+}
 
 export default GlobalPlayer;

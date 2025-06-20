@@ -1,11 +1,12 @@
-import {Avatar, Box, ButtonBase, Drawer, List, ListItem, ToggleButton, Typography} from "@mui/material";
-import {PanelLeftOpen, PanelRightOpen} from "lucide-react";
+import {Avatar, Box, Drawer, List, ListItem, ToggleButton, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {getUserPlaylistInfo} from "../api/playlist/playListApis.ts";
 import type {Playlist} from "../api/playlist/PlaylistInfoResponse.ts";
 import {useMusicStore} from "../store/MusicStore.ts";
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
+import RoundedIconButton from "./RoundedIconButton.tsx";
+import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
 
 
 export const drawerWidth = 240;
@@ -46,17 +47,10 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                 }
             </Box>
 
-            <Box sx={{display: 'flex', alignItems: 'center', p: 0.5,ml: 1.2}}>
-                <ButtonBase
-                    onClick={() => setOpen(!open)}
-                    sx={{
-                        flexShrink: 0,
-                        m: 0,
-                        transition: 'margin 0.3s ease',
-                    }}
-                >
-                    {!open ? <PanelLeftOpen/> : <PanelRightOpen/>}
-                </ButtonBase>
+            <Box sx={{display: 'flex', alignItems: 'center', p: 0.5}}>
+                <RoundedIconButton icon={!open ? <KeyboardArrowRight/> : <KeyboardArrowLeft/>}
+                                   onClick={() => setOpen(!open)}/>
+
 
                 <Typography
                     variant="body1"

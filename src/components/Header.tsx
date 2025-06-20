@@ -7,7 +7,7 @@ import RoundedIconButton from "./RoundedIconButton.tsx";
 export function Header({theme, setTheme}: any) {
 
 
-    return <Box display={"flex"} p={2} height={"5rem"}>
+    return <Box display={"flex"} p={2} height={"5rem"} position={"sticky"} top={0} zIndex={1000} sx={{backgroundColor: 'background.default'}}>
         <Stack spacing={2} direction={"row"} position={"absolute"} left={'50%'} sx={{transform: 'translateX(-50%)'}}>
         </Stack>
 

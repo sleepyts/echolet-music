@@ -6,6 +6,13 @@ import {persist, type PersistOptions} from "zustand/middleware";
 
 export const GlobalAudio = new Audio();
 
+
+export enum PlayMode {
+    REPEATONE,
+    REPEAT,
+    SHUFFLE,
+}
+
 interface MusicState {
 
     currentPlaylistId: number;
@@ -29,6 +36,7 @@ interface AudioState {
     duration: number;
     paused: boolean;
     volume: number;
+    playMode: PlayMode;
 }
 
 interface AudioAction {
@@ -52,6 +60,10 @@ interface AudioAction {
     onTimeUpdate: () => void
 
     onEnd: () => void;
+
+    changePlayMode: () => void;
+
+    changeVolume: (volume: number) => void;
 }
 
 async function getMusicUrl(id: number) {
@@ -59,8 +71,23 @@ async function getMusicUrl(id: number) {
     return musicData.data[0].url;
 }
 
-type FullState = MusicState & MusicAction & AudioAction & AudioState;
+/**
+ * 切换播放模式
+ * @param mode 当前播放模式
+ */
+function nextPlayMode(mode: PlayMode) {
+    switch (mode) {
+        case PlayMode.REPEATONE:
+            return PlayMode.REPEAT;
+        case PlayMode.REPEAT:
+            return PlayMode.SHUFFLE;
+        case PlayMode.SHUFFLE:
+            return PlayMode.REPEATONE;
+    }
+}
 
+
+type FullState = MusicState & MusicAction & AudioAction & AudioState;
 type MyPersist = PersistOptions<FullState>;
 export const useMusicStore = create<MusicState & MusicAction & AudioAction & AudioState,
     [["zustand/persist", PersistOptions<FullState>]]>(
@@ -73,7 +100,19 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
             paused: true,
             volume: 1,
             currentMusicIds: undefined,
+            playMode: PlayMode.REPEAT,
 
+            changeVolume: (volume: number) => {
+                GlobalAudio.volume = volume
+                set(() => ({
+                    volume: volume,
+                }))
+            },
+            changePlayMode: () => {
+                set(() => ({
+                    playMode: nextPlayMode(get().playMode),
+                }))
+            },
             /**
              * 当刷新时 GlobalAudio是一个新的对象，需要重新设置音乐状态
              */
@@ -175,9 +214,21 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                 return new Promise<void>((resolve) => {
                     const currentMusicIds = get().currentMusicIds!;
                     const currentIndex = currentMusicIds.indexOf(get().currentMusicData?.id || 0)
-                    const nextIndex = next
-                        ? (currentIndex + 1) % currentMusicIds.length
-                        : (currentIndex - 1 + currentMusicIds.length) % currentMusicIds.length;
+                    let nextIndex = 0
+                    switch (get().playMode) {
+                        case PlayMode.REPEAT:
+                            nextIndex = next
+                                ? (currentIndex + 1) % currentMusicIds.length
+                                : (currentIndex - 1 + currentMusicIds.length) % currentMusicIds.length;
+                            break;
+                        case PlayMode.REPEATONE:
+                            nextIndex = currentIndex;
+                            break;
+                        case PlayMode.SHUFFLE:
+                            nextIndex = Math.floor(Math.random() * currentMusicIds.length);
+                            break;
+                    }
+
                     const nextId = currentMusicIds[nextIndex];
                     getSongDetail([nextId]).then((response) => {
                         get().setCurrentMusicData(response.songs[0]);
@@ -187,10 +238,6 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
             },
             seek: (time: number) => {
                 GlobalAudio.currentTime = time
-                GlobalAudio.fastSeek(time)
-                set(() => ({
-                    currentTime: time,
-                }))
             }
 
         }),
@@ -204,6 +251,7 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                 duration: state.duration,
                 paused: true,
                 volume: state.volume,
+                playMode: state.playMode,
             })
         }
     )
