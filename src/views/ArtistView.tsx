@@ -1,15 +1,18 @@
 import {useParams} from "react-router-dom";
 import type {ArtistData} from "../api/artist/ArtistDetailModel.ts";
 import {useEffect, useState} from "react";
-import {getArtistDetail, getArtistHotSongs} from "../api/artist/artistApis.ts";
-import {Avatar, Box, Divider, Grid, Stack, ToggleButton, Typography} from "@mui/material";
+import {getArtistDetail, getArtistHotAlbums, getArtistHotSongs} from "../api/artist/artistApis.ts";
+import {Avatar, Box, Grid, IconButton, Link, Stack, ToggleButton, Typography} from "@mui/material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
-import {ExpandLess, ExpandMore, FavoriteBorder, PlayArrow} from "@mui/icons-material";
+import {ExpandLess, ExpandMore, FavoriteBorder, PlayArrow, ReadMore} from "@mui/icons-material";
 import {t} from "i18next";
 import type {Song} from "../api/track/SongDetailResponse.ts";
 import {LazyAvatar} from "./PlaylistView.tsx";
 import {useMusicStore} from "../store/MusicStore.ts";
 import {getSongDetail} from "../api/track/songApis.ts";
+import {getTransformScaleStyles} from "../css/CommonStyle.ts";
+import type {HotAlbum} from "../api/artist/ArtistAlbumModel.ts";
+import {fromTimestampToYear} from "../utils/MusicDataUtil.ts";
 
 export function ArtistView() {
     const artistId = useParams().id;
@@ -31,12 +34,122 @@ export function ArtistView() {
     return <>
         <Box p={2} sx={{display: "flex", flexDirection: "column"}}>
             <ArtistInfo artistDetail={artistDetail}/>
-            <Divider/>
             <ArtistHotSong artistId={Number(artistId)}/>
+            <ArtistsAlbums artistId={Number(artistId)}/>
         </Box>
     </>
 }
 
+export function ArtistsAlbums({artistId}: { artistId: number }) {
+    const [albums, setAlbums] = useState<HotAlbum[]>([]);
+
+    useEffect(() => {
+        getArtistHotAlbums(artistId).then(res => {
+            setAlbums(res);
+        });
+    }, [artistId]);
+
+    return (
+        <Box mt={4}>
+            <Box display="flex" flexDirection="row" alignItems="center" mb={2} gap={2}>
+                <Typography variant="h5" fontWeight="bold" color="text.primary">
+                    {t("album-ep-single")}
+                </Typography>
+                <RoundedIconButton
+                    title={t('show-all')}
+                    icon={<ReadMore/>}
+                />
+            </Box>
+
+
+            {albums.length === 0 ? (
+                <Typography color="text.secondary">{t("noAlbumsAvailable")}</Typography>
+            ) : (
+                <Grid container spacing={3}>
+                    {albums.map(album => (
+                        <Grid key={album.id} width={'15rem'} component={"div"}>
+
+                            <Box>
+                                <Box
+                                    sx={(theme) => ({
+                                        position: 'relative', // 关键！让播放按钮定位生效
+                                        borderRadius: 2,
+                                        overflow: 'hidden',
+                                        transition: 'all 0.3s',
+                                        backgroundColor:
+                                            theme.palette.mode === 'dark'
+                                                ? theme.palette.grey[800]
+                                                : theme.palette.grey[100],
+                                        boxShadow:
+                                            theme.palette.mode === 'dark'
+                                                ? '0 0 18px rgba(255,255,255,0.1)'
+                                                : '0 6px 24px rgba(0,0,0,0.15)',
+
+                                        '&:hover': {
+                                            boxShadow:
+                                                theme.palette.mode === 'dark'
+                                                    ? '0 0 32px rgba(255,255,255,0.2)'
+                                                    : '0 12px 36px rgba(0,0,0,0.25)',
+                                            cursor: 'pointer',
+
+                                            // 播放按钮显现
+                                            '& .hover-play-button': {
+                                                opacity: 1,
+                                                transform: 'translate(-50%, -50%) scale(1)',
+                                            },
+                                        },
+                                    })}
+                                >
+                                    {/* 图片组件 */}
+                                    <LazyAvatar src={album.picUrl || ""} size={'15rem'}/>
+
+                                    {/* 播放按钮 */}
+                                    <IconButton
+                                        className="hover-play-button"
+                                        sx={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%) scale(0.9)',
+                                            opacity: 0,
+                                            color: '#fff',
+                                            backgroundColor: 'rgba(122,119,119,0.6)',
+                                            transition: 'all 0.3s ease',
+                                            zIndex: 2,
+                                            '&:hover': {
+                                                backgroundColor: 'rgba(45,44,44,0.8)',
+                                            },
+                                        }}
+                                    >
+                                        <PlayArrow fontSize="large"/>
+                                    </IconButton>
+                                </Box>
+
+                                <Box mt={2}>
+                                    <Typography variant="subtitle2" fontWeight="bold" noWrap>
+                                        <Link
+                                            underline="hover"
+                                            color="textPrimary"
+                                            sx={{'&:hover': {cursor: 'pointer'}}}
+                                            onClick={() => {
+                                                // TODO: handle click
+                                            }}
+                                        >
+                                            {album.name}
+                                        </Link>
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {fromTimestampToYear(album.publishTime)}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Grid>
+                    ))}
+                </Grid>
+            )}
+        </Box>
+    );
+}
 
 export function ArtistInfo({artistDetail}: { artistDetail: ArtistData | undefined }) {
     if (!artistDetail) return null;
@@ -59,8 +172,6 @@ export function ArtistInfo({artistDetail}: { artistDetail: ArtistData | undefine
                     · {artistDetail.artist.albumSize} {t('album-count')} · {artistDetail.artist.mvSize} {t('mv-count')}</Typography>
                 <Typography variant="body2" color="text.secondary">{artistDetail.artist.briefDesc}</Typography>
                 <Stack direction="row" spacing={2}>
-                    <RoundedIconButton showBorder={true} icon={<PlayArrow/>} onClick={()=>{
-                    }}/>
                     <RoundedIconButton showBorder={true} icon={<FavoriteBorder/>}/>
                 </Stack>
 
@@ -94,7 +205,7 @@ function ArtistHotSong({artistId}: { artistId: number | undefined }) {
     const displayedSongs = expanded ? hotSongs : hotSongs.slice(0, 10);
 
     return <>
-        <Box sx={{display: "flex", justifyContent: "flex-start", alignItems: "center", mt: 2}}>
+        <Box sx={{display: "flex", justifyContent: "flex-start", alignItems: "center", mt: 2, gap: 2}}>
             <Typography variant="h5"
                         color="textPrimary"
                         fontWeight={"bold"}
@@ -103,26 +214,33 @@ function ArtistHotSong({artistId}: { artistId: number | undefined }) {
             </Typography>
             {hotSongs.length > 8 && (
                 <RoundedIconButton
+                    title={expanded ? t('unexpand') : t('show-more')}
                     icon={expanded ? <ExpandLess/> : <ExpandMore/>}
                     onClick={() => setExpanded(!expanded)}
                 >
                 </RoundedIconButton>
             )}
-
+            <RoundedIconButton
+                title={t('show-all')}
+                icon={<ReadMore/>}
+            />
         </Box>
 
 
         <Grid container spacing={2} sx={{mt: 2,}}>
             {displayedSongs.map(song => (
-                <Grid item key={song.id} sx={{width: "17%"}}>
+                <Grid key={song.id} sx={{width: "17%"}} component={"div"}>
                     <ToggleButton
                         value={song.id}
                         title={song.name}
-                        sx={{
-                            border: "none",
-                            width: "100%",
-                            height: "4rem",
-                        }}
+                        sx={[
+                            {
+                                border: "none",
+                                width: "100%",
+                                height: "4rem",
+                            },
+                            getTransformScaleStyles(0.97, 0.15)
+                        ]}
                         selected={currentMusicData?.id === song.id}
                         onDoubleClick={async () => {
                             setCurrentMusicData(song)
@@ -133,8 +251,6 @@ function ArtistHotSong({artistId}: { artistId: number | undefined }) {
                         <Box sx={{
                             width: "100%",
                         }}>
-
-
                             <Typography
                                 className="scroll-text"
                                 fontSize="0.8rem"

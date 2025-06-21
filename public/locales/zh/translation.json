@@ -7,5 +7,9 @@
   "search": "搜索",
   "hot-songs": "热门歌曲",
   "album-count": "张专辑",
-  "mv-count": "个MV"
+  "mv-count": "个MV",
+  "show-more": "显示更多",
+  "unexpand": "收起",
+  "album-ep-single": "专辑 & EP / 单曲",
+  "show-all": "显示全部"
 }

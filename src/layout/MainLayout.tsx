@@ -27,7 +27,8 @@ export function MainLayout() {
                 }}>
                     <Header theme={theme} setTheme={setTheme}/>
                     <Box sx={{
-                        mb: currentSong === null ? 0 : '6rem'
+                        mb: currentSong === null ? 0 : '6rem',
+                        p: 2
                     }}>
                         <Outlet/>
 
