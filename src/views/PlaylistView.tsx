@@ -1,6 +1,6 @@
 import {t} from "i18next";
 import {useMusicStore} from "../store/MusicStore"
-import {Avatar, Box, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
+import {Avatar, Box, Input, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {getPlaylistDetail} from "../api/playlist/playListApis.ts";
 import type {PlaylistDetail} from "../api/playlist/PlayListDetailResponse.ts";
@@ -8,6 +8,8 @@ import type {Song} from "../api/track/SongDetailResponse.ts";
 import {getSongDetail} from "../api/track/songApis.ts";
 import {fromMsToTime} from "../utils/MusicDataUtil.ts";
 import {useInView} from "react-intersection-observer";
+import {Menu, PlayArrow, Search} from "@mui/icons-material";
+import RoundedIconButton from "../components/RoundedIconButton.tsx";
 
 export function PlaylistView() {
     const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
@@ -20,8 +22,7 @@ export function PlaylistView() {
     return <>
         <Box p={2} sx={{display: 'flex', flexDirection: 'column'}}>
             <TopPlaylistInfo playlist={currentPlaylistDetail}/>
-            <SeriesList
-                seriesIds={currentPlaylistDetail?.trackIds.map(item => item.id) || []}/>
+            <SeriesList seriesIds={currentPlaylistDetail?.trackIds.map(item => item.id) || []}/>
         </Box>
     </>
 }
@@ -70,7 +71,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
     const [dataList, setDataList] = useState<Song[]>([]);
 
     const [loading, setLoading] = useState<boolean>(true);
-
+    const [searchText, setSearchText] = useState<string>("");
     useEffect(() => {
         if (seriesIds.length === 0) return;
 
@@ -95,7 +96,20 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
     };
 
     return (
-        <div>
+        <Box sx={{p: 1}}>
+            <Box sx={{display: 'flex', flexDirection: 'row', gap: 2, mb: 2, alignItems: 'center'}}>
+                <RoundedIconButton icon={<PlayArrow/>} onClick={() => {
+                    setCurrentMusicData(dataList[0])
+                    start()
+                }}/>
+                <RoundedIconButton icon={<Menu/>}/>
+                <Input startAdornment={<Search fontSize="small"/>}
+                       placeholder={t('search')}
+                       onChange={(e) => {
+                           setSearchText(e.target.value)
+                       }}
+                />
+            </Box>
 
             <Stack direction={"column"} spacing={2}>
                 {
@@ -104,65 +118,59 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                             <Skeleton key={item} variant="rectangular" width={"100%"} height={"3rem"}/>
                         ))}
                     </> : <>
-
-                        {dataList.map(item => (
-                            <ToggleButton value={item.id}
-                                          key={item.id}
-                                          sx={{
-                                              border: 'none',
-                                              justifyContent: "start",
-                                              display: "flex",
-                                          }}
-                                          size={"small"}
-                                          selected={currentMusicData?.id === item.id}
-                                          onDoubleClick={
-                                              async () => {
-                                                  setCurrentMusicData(item)
-                                                  start()
-                                              }
-                                          }
-                            >
-                                <LazyAvatar src={item.al.picUrl}/>
-                                <Box sx={{
-                                    flex: 2,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'flex-start',
-                                }}>
-                                    <Typography variant="body2" fontWeight="bold" noWrap textTransform={"capitalize"}>
-                                        {item.name}
-                                    </Typography>
-                                    <Typography variant="body2" color={"text.secondary"} noWrap
-                                                textTransform={"capitalize"}>
-                                        {item.ar.map(artist => artist.name).join(' / ')}
-                                    </Typography>
-                                </Box>
-                                <Box sx={{
-                                    alignItems: 'flex-start',
-                                    justifyContent: 'flex-start',
-                                    flex: 1.5
-                                }}>
-                                    <Typography variant="body2" color={"textPrimary"} noWrap
-                                                textTransform={"capitalize"}>
-                                        {item.al.name}
-                                    </Typography>
-                                </Box>
-                                <Box sx={{
-                                    textAlign: 'right',
-                                    width: '100%',
-                                    alignItems: 'center',
-                                    flex: 1
-                                }}>
-                                    <Typography variant="body2" color={"textPrimary"} noWrap>
-                                        {fromMsToTime(item.dt)}
-                                    </Typography>
-                                </Box>
-                            </ToggleButton>
-                        ))}
+                        {dataList.map(item =>
+                                (searchText === "" || item.name.toLowerCase().includes(searchText.toLowerCase()) || item.ar.some(artist => artist.name.toLowerCase().includes(searchText.toLowerCase()))) && (
+                                    <ToggleButton value={item.id}
+                                                  key={item.id}
+                                                  sx={{
+                                                      border: 'none',
+                                                      justifyContent: "start",
+                                                      display: "flex",
+                                                  }}
+                                                  size={"small"}
+                                                  selected={currentMusicData?.id === item.id}
+                                                  onDoubleClick={async () => {
+                                                      setCurrentMusicData(item)
+                                                      start()
+                                                  }}
+                                    >
+                                        <LazyAvatar src={item.al.picUrl}/>
+                                        <Box sx={{flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+                                            <Typography variant="body2" fontWeight="bold" noWrap textTransform="capitalize">
+                                                {item.name}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary" noWrap
+                                                        textTransform="capitalize">
+                                                {item.ar.map((artist, index) => (
+                                                    <span key={artist.id || artist.name}>
+                            <Link href={`/artist/${artist.id}`}
+                                  underline="hover"
+                                  color="textSecondary"
+                                  variant="caption">
+                                {artist.name}
+                            </Link>
+                                                        {index < item.ar.length - 1 && ' / '}
+                        </span>
+                                                ))}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{alignItems: 'flex-start', justifyContent: 'flex-start', flex: 1.5}}>
+                                            <Typography variant="body2" color="textPrimary" noWrap textTransform="capitalize">
+                                                {item.al.name}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{textAlign: 'right', width: '100%', alignItems: 'center', flex: 1}}>
+                                            <Typography variant="body2" color="textPrimary" noWrap>
+                                                {fromMsToTime(item.dt)}
+                                            </Typography>
+                                        </Box>
+                                    </ToggleButton>
+                                )
+                        )}
                     </>
                 }
             </Stack>
-        </div>
+        </Box>
     )
         ;
 };
