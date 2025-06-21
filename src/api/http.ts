@@ -13,14 +13,17 @@ const http = axios.create({
 
 http.interceptors.request.use(config => {
         const proxy = import.meta.env.VITE_API_PROXY;
-        if (config.method === 'get' || config.method === 'GET') {
-            config.params = config.params || {};
-            config.params.proxy = proxy;
-        } else {
-            if (config.data && typeof config.data === 'object') {
-                config.data.proxy = proxy;
+        if (proxy && proxy !== '') {
+
+            if (config.method === 'get' || config.method === 'GET') {
+                config.params = config.params || {};
+                config.params.proxy = proxy;
             } else {
-                config.data = {proxy: proxy};
+                if (config.data && typeof config.data === 'object') {
+                    config.data.proxy = proxy;
+                } else {
+                    config.data = {proxy: proxy};
+                }
             }
         }
         return config;
