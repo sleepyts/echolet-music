@@ -155,8 +155,6 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                             romalyric: parseLrc(romalrc.lyric)
                         }))
                     }
-
-                    console.log(get().romalyric)
                 });
             },
 
