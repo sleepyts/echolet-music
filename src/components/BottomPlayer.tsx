@@ -1,5 +1,5 @@
 // src/components/GlobalPlayer.tsx
-import {Box, Slider, Stack, Typography} from '@mui/material';
+import {Box, Link, Slider, Stack, Typography} from '@mui/material';
 import {
     KeyboardArrowUp,
     Pause,
@@ -18,10 +18,11 @@ import RoundedIconButton from "./RoundedIconButton.tsx";
 import {SliderStyles} from "../css/CommonStyle.ts";
 import {useState} from "react";
 import {PlayerDetail} from "./PlayerDetail.tsx";
+import {useNavigate} from "react-router-dom";
 
 function GlobalPlayer() {
     const currentSong = useMusicStore(state => state.currentMusicData);
-
+    const navigate = useNavigate()
     return (currentSong !== null &&
         <Box sx={{
             position: "fixed",
@@ -29,7 +30,7 @@ function GlobalPlayer() {
             left: 0,
             width: "100%",
             height: `6rem`,
-            backgroundColor: (theme) => theme.palette.background.default,
+            backgroundColor: (theme) => theme.palette.background.paper,
             zIndex: (theme) => theme.zIndex.drawer,
         }}>
             <Box padding={2} sx={{display: 'flex', alignItems: 'center', width: '100%', m: 'auto'}}>
@@ -37,11 +38,24 @@ function GlobalPlayer() {
                     <img src={currentSong?.al.picUrl} alt={currentSong?.name} width={64} height={64}/>
                     <Box sx={{display: 'flex', flexDirection: 'column'}}>
                         <Typography sx={{marginLeft: 2, fontSize: 12}}>{currentSong?.name}</Typography>
-                        <Typography
-                            sx={{
-                                marginLeft: 2,
-                                fontSize: 10
-                            }}><a>{currentSong?.ar.map(a => a.name).join(' / ')}</a></Typography>
+                        <Typography variant="body2" color="text.secondary" noWrap
+                                    textTransform="capitalize">
+                            {currentSong?.ar.map((artist, index) => (
+                                <span key={artist.id || artist.name}>
+                                                    <Link
+                                                        underline="hover"
+                                                        color="textSecondary"
+                                                        variant="caption"
+                                                        onClick={() => {
+                                                            navigate('/artist/' + artist.id)
+                                                        }}
+                                                    >
+                                                        {artist.name}
+                                                    </Link>
+                                    {index < currentSong?.ar.length - 1 && ' / '}
+                                </span>
+                            ))}
+                        </Typography>
                     </Box>
                 </Box>
                 <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} flex={4}>
