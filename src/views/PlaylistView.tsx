@@ -1,6 +1,6 @@
 import {t} from "i18next";
 import {useMusicStore} from "../store/MusicStore"
-import {Avatar, Box, Link, Stack, ToggleButton, Typography} from "@mui/material";
+import {Avatar, Box, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {getPlaylistDetail} from "../api/playlist/playListApis.ts";
 import type {PlaylistDetail} from "../api/playlist/PlayListDetailResponse.ts";
@@ -69,6 +69,8 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
     const [, setVisibleIds] = useState<number[]>([]);
     const [dataList, setDataList] = useState<Song[]>([]);
 
+    const [loading, setLoading] = useState<boolean>(true);
+
     useEffect(() => {
         if (seriesIds.length === 0) return;
 
@@ -76,7 +78,15 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
         fetchDataByIds(seriesIds).then(data => {
             setDataList(data);
             setVisibleIds(seriesIds);
+            setLoading(false);
         });
+
+        return () => {
+            setCurrentMusicIds([])
+            setDataList([])
+            setVisibleIds([])
+            setLoading(true)
+        }
     }, [seriesIds]);
 
 
@@ -88,59 +98,69 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
         <div>
 
             <Stack direction={"column"} spacing={2}>
+                {
+                    loading ? <>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(item => (
+                            <Skeleton key={item} variant="rectangular" width={"100%"} height={"3rem"}/>
+                        ))}
+                    </> : <>
 
-                {dataList.map(item => (
-                    <ToggleButton value={item.id}
-                                  key={item.id}
-                                  sx={{
-                                      border: 'none',
-                                      justifyContent: "start",
-                                      display: "flex",
-                                  }}
-                                  size={"small"}
-                                  selected={currentMusicData?.id === item.id}
-                                  onDoubleClick={
-                                      async () => {
-                                          setCurrentMusicData(item)
-                                          start()
-                                      }
-                                  }
-                    >
-                        <LazyAvatar src={item.al.picUrl}/>
-                        <Box sx={{
-                            flex: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                        }}>
-                            <Typography variant="body2" fontWeight="bold" noWrap textTransform={"capitalize"}>
-                                {item.name}
-                            </Typography>
-                            <Typography variant="body2" color={"text.secondary"} noWrap textTransform={"capitalize"}>
-                                {item.ar.map(artist => artist.name).join(' / ')}
-                            </Typography>
-                        </Box>
-                        <Box sx={{
-                            alignItems: 'flex-start',
-                            justifyContent: 'flex-start',
-                            flex: 1.5
-                        }}>
-                            <Typography variant="body2" color={"textPrimary"} noWrap textTransform={"capitalize"}>
-                                {item.al.name}
-                            </Typography>
-                        </Box>
-                        <Box sx={{
-                            textAlign: 'right',
-                            width: '100%',
-                            alignItems: 'center',
-                            flex: 1
-                        }}>
-                            <Typography variant="body2" color={"textPrimary"} noWrap>
-                                {fromMsToTime(item.dt)}
-                            </Typography>
-                        </Box>
-                    </ToggleButton>
-                ))}
+                        {dataList.map(item => (
+                            <ToggleButton value={item.id}
+                                          key={item.id}
+                                          sx={{
+                                              border: 'none',
+                                              justifyContent: "start",
+                                              display: "flex",
+                                          }}
+                                          size={"small"}
+                                          selected={currentMusicData?.id === item.id}
+                                          onDoubleClick={
+                                              async () => {
+                                                  setCurrentMusicData(item)
+                                                  start()
+                                              }
+                                          }
+                            >
+                                <LazyAvatar src={item.al.picUrl}/>
+                                <Box sx={{
+                                    flex: 2,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'flex-start',
+                                }}>
+                                    <Typography variant="body2" fontWeight="bold" noWrap textTransform={"capitalize"}>
+                                        {item.name}
+                                    </Typography>
+                                    <Typography variant="body2" color={"text.secondary"} noWrap
+                                                textTransform={"capitalize"}>
+                                        {item.ar.map(artist => artist.name).join(' / ')}
+                                    </Typography>
+                                </Box>
+                                <Box sx={{
+                                    alignItems: 'flex-start',
+                                    justifyContent: 'flex-start',
+                                    flex: 1.5
+                                }}>
+                                    <Typography variant="body2" color={"textPrimary"} noWrap
+                                                textTransform={"capitalize"}>
+                                        {item.al.name}
+                                    </Typography>
+                                </Box>
+                                <Box sx={{
+                                    textAlign: 'right',
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    flex: 1
+                                }}>
+                                    <Typography variant="body2" color={"textPrimary"} noWrap>
+                                        {fromMsToTime(item.dt)}
+                                    </Typography>
+                                </Box>
+                            </ToggleButton>
+                        ))}
+                    </>
+                }
             </Stack>
         </div>
     )

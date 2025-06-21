@@ -322,7 +322,6 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
                 currentPlaylistId: state.currentPlaylistId,
                 currentMusicData: state.currentMusicData,
                 currentMusicIds: state.currentMusicIds,
-                currentTime: state.currentTime,
                 duration: state.duration,
                 paused: true,
                 volume: state.volume,
