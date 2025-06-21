@@ -22,6 +22,14 @@ export function fromSstoTime(ss: number): string {
     return `${minutes}:${paddedSeconds}`;
 }
 
+export function fromTimestampToYear(timestamp: number): string {
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+        return "Invalid date";
+    }
+    return date.getFullYear().toString();
+}
+
 /**
  * 歌词转换函数
  * "[00:00.000] 作词 : 张国祥 => { time: 歌词时间，单位秒，text: 歌词内容}
