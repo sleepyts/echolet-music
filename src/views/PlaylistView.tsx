@@ -99,7 +99,17 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
 
     return (
         <Box sx={{p: 1}}>
-            <Box sx={{position: "sticky", top: '5rem', zIndex: 1, backgroundColor: "background.paper", display: 'flex', flexDirection: 'row', gap: 2, mb: 2, alignItems: 'center'}}>
+            <Box sx={{
+                position: "sticky",
+                top: '5rem',
+                zIndex: 1,
+                backgroundColor: "background.paper",
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 2,
+                mb: 2,
+                alignItems: 'center'
+            }}>
                 <RoundedIconButton icon={<PlayArrow/>} onClick={() => {
                     setCurrentMusicData(dataList[0])
                     start()
@@ -142,7 +152,8 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                     >
                                         <LazyAvatar src={item.al.picUrl}/>
                                         <Box sx={{flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
-                                            <Typography variant="body2" fontWeight="bold" noWrap textTransform="capitalize">
+                                            <Typography variant="body2" fontWeight="bold" color={"textPrimary"} noWrap
+                                                        textTransform="capitalize">
                                                 {item.name}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary" noWrap
@@ -186,7 +197,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
         ;
 };
 
-export const LazyAvatar = ({src}: { src: string }) => {
+export const LazyAvatar = ({src, size = "3rem"}: { src: string, size?: string }) => {
     const {ref, inView} = useInView({
         triggerOnce: true,
         threshold: 0.1,
@@ -197,12 +208,12 @@ export const LazyAvatar = ({src}: { src: string }) => {
             {inView ? (
                 <Avatar
                     src={src}
-                    sx={{width: '3rem', height: '3rem', mr: 2}}
+                    sx={{width: size, height: size, mr: 2}}
                     variant="rounded"
                 />
             ) : (
                 <Avatar
-                    sx={{width: '3rem', height: '3rem', mr: 2}}
+                    sx={{width: size, height: size, mr: 2}}
                     variant="rounded"
                 />
             )}
