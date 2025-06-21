@@ -2,17 +2,9 @@ import {useParams} from "react-router-dom";
 import type {ArtistData} from "../api/artist/ArtistDetailModel.ts";
 import {useEffect, useState} from "react";
 import {getArtistDetail, getArtistHotSongs} from "../api/artist/artistApis.ts";
-import {Avatar, Box, Button, Divider, Grid, Link, Stack, ToggleButton, Typography} from "@mui/material";
+import {Avatar, Box, Divider, Grid, Stack, ToggleButton, Typography} from "@mui/material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
-import {
-    ExpandLess,
-    ExpandMore,
-    Favorite,
-    FavoriteBorder,
-    FavoriteOutlined,
-    LinkedIn,
-    PlayArrow
-} from "@mui/icons-material";
+import {ExpandLess, ExpandMore, FavoriteBorder, PlayArrow} from "@mui/icons-material";
 import {t} from "i18next";
 import type {Song} from "../api/track/SongDetailResponse.ts";
 import {LazyAvatar} from "./PlaylistView.tsx";
@@ -48,7 +40,6 @@ export function ArtistView() {
 
 export function ArtistInfo({artistDetail}: { artistDetail: ArtistData | undefined }) {
     if (!artistDetail) return null;
-
     return <>
         <Box sx={{display: "flex", justifyContent: "flex-start", flexDirection: "row", mb: 2}}>
             <Avatar src={artistDetail.artist.avatar}
@@ -64,11 +55,12 @@ export function ArtistInfo({artistDetail}: { artistDetail: ArtistData | undefine
                             color="textPrimary"
                             fontWeight={"bold"}
                 >{artistDetail.artist.name}</Typography>
-                <Typography variant="subtitle2" color="textSecondary">{artistDetail.artist.musicSize} 首歌
-                    · {artistDetail.artist.albumSize} 张专辑 · {artistDetail.artist.mvSize} 个MV</Typography>
+                <Typography variant="subtitle2" color="textSecondary">{artistDetail.artist.musicSize} {t('song-count')}
+                    · {artistDetail.artist.albumSize} {t('album-count')} · {artistDetail.artist.mvSize} {t('mv-count')}</Typography>
                 <Typography variant="body2" color="text.secondary">{artistDetail.artist.briefDesc}</Typography>
                 <Stack direction="row" spacing={2}>
-                    <RoundedIconButton showBorder={true} icon={<PlayArrow/>}/>
+                    <RoundedIconButton showBorder={true} icon={<PlayArrow/>} onClick={()=>{
+                    }}/>
                     <RoundedIconButton showBorder={true} icon={<FavoriteBorder/>}/>
                 </Stack>
 
@@ -163,7 +155,13 @@ function ArtistHotSong({artistId}: { artistId: number | undefined }) {
                             <Typography fontSize={"0.7rem"}
                                         color="text.secondary"
                                         align={"left"}
-                                        noWrap
+                                        title={song.ar.map(artist => artist.name).join("/")}
+                                        sx={{
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            width: "10rem",
+                                        }}
                                         textTransform="capitalize">
                                 {song.ar.map(artist => artist.name).join("/")}
                             </Typography>

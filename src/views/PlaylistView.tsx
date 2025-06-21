@@ -90,7 +90,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
             setVisibleIds([])
             setLoading(true)
         }
-    }, [seriesIds]);
+    }, [seriesIds, setCurrentMusicIds]);
 
 
     const fetchDataByIds = async (ids: number[]): Promise<Song[]> => {
@@ -99,7 +99,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
 
     return (
         <Box sx={{p: 1}}>
-            <Box sx={{display: 'flex', flexDirection: 'row', gap: 2, mb: 2, alignItems: 'center'}}>
+            <Box sx={{position: "sticky", top: '5rem', zIndex: 1, backgroundColor: "background.paper", display: 'flex', flexDirection: 'row', gap: 2, mb: 2, alignItems: 'center'}}>
                 <RoundedIconButton icon={<PlayArrow/>} onClick={() => {
                     setCurrentMusicData(dataList[0])
                     start()

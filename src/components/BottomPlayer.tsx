@@ -32,7 +32,7 @@ function GlobalPlayer() {
             backgroundColor: (theme) => theme.palette.background.default,
             zIndex: (theme) => theme.zIndex.drawer,
         }}>
-            <Box padding={2} sx={{display: 'flex', alignItems: 'center', width: '80%', m: 'auto'}}>
+            <Box padding={2} sx={{display: 'flex', alignItems: 'center', width: '100%', m: 'auto'}}>
                 <Box sx={{display: 'flex', alignItems: 'center'}} flex={1}>
                     <img src={currentSong?.al.picUrl} alt={currentSong?.name} width={64} height={64}/>
                     <Box sx={{display: 'flex', flexDirection: 'column'}}>
