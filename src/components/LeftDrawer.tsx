@@ -98,8 +98,8 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                                 }}
                             >
                                 <Avatar src={playlist.coverImgUrl} variant={"rounded"}/>
-                                {open && <Typography variant={"body2"} textTransform={"none"}
-                                                     ml={2} noWrap={true}>{playlist.name}</Typography>}
+                                {open && <Typography fontSize={"0.8rem"} color={"textPrimary"} textTransform={"none"}
+                                                     ml={1} noWrap={true}>{playlist.name}</Typography>}
                             </ToggleButton>
                         </ListItem>
                     ))
