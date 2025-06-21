@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
 import RoundedIconButton from "./RoundedIconButton.tsx";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
+import {getTransformScaleStyles} from "../css/CommonStyle.ts";
 
 
 export const drawerWidth = 240;
@@ -78,14 +79,17 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                                   title={playlist.name}
                         >
                             <ToggleButton
-                                sx={{
-                                    p: 0.5,
-                                    width: '100%',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    border: 'none',
-                                    '&.Mui-selected': {},
-                                }}
+                                sx={[
+                                    {
+                                        p: 0.5,
+                                        width: '100%',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        border: 'none',
+                                        '&.Mui-selected': {},
+                                    },
+                                    getTransformScaleStyles(0.99, 0.1)
+                                ]}
                                 value={playlist.id}
                                 selected={currentPlaylistId === playlist.id}
                                 onClick={() => {

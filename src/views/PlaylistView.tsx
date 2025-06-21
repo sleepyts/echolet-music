@@ -10,6 +10,7 @@ import {fromMsToTime} from "../utils/MusicDataUtil.ts";
 import {useInView} from "react-intersection-observer";
 import {Menu, PlayArrow, Search} from "@mui/icons-material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
+import {useNavigate} from "react-router-dom";
 
 export function PlaylistView() {
     const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
@@ -72,6 +73,8 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>("");
+
+    const navigate = useNavigate();
     useEffect(() => {
         if (seriesIds.length === 0) return;
 
@@ -83,7 +86,6 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
         });
 
         return () => {
-            setCurrentMusicIds([])
             setDataList([])
             setVisibleIds([])
             setLoading(true)
@@ -122,11 +124,15 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                 (searchText === "" || item.name.toLowerCase().includes(searchText.toLowerCase()) || item.ar.some(artist => artist.name.toLowerCase().includes(searchText.toLowerCase()))) && (
                                     <ToggleButton value={item.id}
                                                   key={item.id}
-                                                  sx={{
-                                                      border: 'none',
-                                                      justifyContent: "start",
-                                                      display: "flex",
-                                                  }}
+                                                  sx={
+                                                      [
+                                                          {
+                                                              border: 'none',
+                                                              justifyContent: "start",
+                                                              display: "flex",
+                                                          },
+                                                      ]
+                                                  }
                                                   size={"small"}
                                                   selected={currentMusicData?.id === item.id}
                                                   onDoubleClick={async () => {
@@ -143,19 +149,24 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                                         textTransform="capitalize">
                                                 {item.ar.map((artist, index) => (
                                                     <span key={artist.id || artist.name}>
-                            <Link href={`/artist/${artist.id}`}
-                                  underline="hover"
-                                  color="textSecondary"
-                                  variant="caption">
-                                {artist.name}
-                            </Link>
+                                                    <Link
+                                                        underline="hover"
+                                                        color="textSecondary"
+                                                        variant="caption"
+                                                        onClick={() => {
+                                                            navigate('/artist/' + artist.id)
+                                                        }}
+                                                    >
+                                                        {artist.name}
+                                                    </Link>
                                                         {index < item.ar.length - 1 && ' / '}
-                        </span>
+                                                    </span>
                                                 ))}
                                             </Typography>
                                         </Box>
                                         <Box sx={{alignItems: 'flex-start', justifyContent: 'flex-start', flex: 1.5}}>
-                                            <Typography variant="body2" color="textPrimary" noWrap textTransform="capitalize">
+                                            <Typography variant="body2" color="textPrimary" noWrap
+                                                        textTransform="capitalize">
                                                 {item.al.name}
                                             </Typography>
                                         </Box>

@@ -27,3 +27,9 @@ export const SliderStyles = {
         },
     },
 }
+export const getTransformScaleStyles = (scale = 0.9,time=0.1) => ({
+    transition: `transform ${time}s ease-in-out`,
+    '&:active': {
+        transform: `scale(${scale})`,
+    },
+});
