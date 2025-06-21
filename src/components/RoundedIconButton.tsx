@@ -23,6 +23,7 @@ export default function RoundedIconButton(
         showBorder = false,
         onClick = () => {
         },
+        fontSize = 14,
         title,
         p = 0.75,
     }: RoundedIconButtonProps) {
@@ -67,6 +68,8 @@ export default function RoundedIconButton(
                     sx={{
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: fontSize,
                     }}
                 >
                     {text}

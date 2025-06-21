@@ -186,7 +186,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
         ;
 };
 
-const LazyAvatar = ({src}: { src: string }) => {
+export const LazyAvatar = ({src}: { src: string }) => {
     const {ref, inView} = useInView({
         triggerOnce: true,
         threshold: 0.1,
