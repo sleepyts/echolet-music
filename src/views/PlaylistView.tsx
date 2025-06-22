@@ -1,20 +1,22 @@
 import {t} from "i18next";
 import {useMusicStore} from "../store/MusicStore"
 import {Avatar, Box, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getPlaylistDetail} from "../api/playlist/playListApis.ts";
 import type {PlaylistDetail} from "../api/playlist/PlayListDetailResponse.ts";
 import type {Song} from "../api/track/SongDetailResponse.ts";
 import {getSongDetail} from "../api/track/songApis.ts";
 import {fromMsToTime, fromTimestampToTime} from "../utils/MusicDataUtil.ts";
 import {useInView} from "react-intersection-observer";
-import {Menu, PlayArrow} from "@mui/icons-material";
+import {Menu, MyLocation, PlayArrow} from "@mui/icons-material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
 import {useNavigate} from "react-router-dom";
 
 export function PlaylistView() {
     const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
     const [currentPlaylistDetail, setCurrentPlaylistDetail] = useState<PlaylistDetail | null>(null);
+    const scrollToCurrentRef = React.useRef<() => void>(() => {
+    });
     useEffect(() => {
         getPlaylistDetail(currentPlaylistId).then((res) => {
             setCurrentPlaylistDetail(res.playlist)
@@ -22,14 +24,18 @@ export function PlaylistView() {
     }, [currentPlaylistId]);
     return <>
         <Box p={2} sx={{display: 'flex', flexDirection: 'column'}}>
-            <TopPlaylistInfo playlist={currentPlaylistDetail}/>
-            <SeriesList seriesIds={currentPlaylistDetail?.trackIds.map(item => item.id) || []}/>
+            <TopPlaylistInfo playlist={currentPlaylistDetail} onLocateCurrent={() => scrollToCurrentRef.current()}/>
+            <SeriesList seriesIds={currentPlaylistDetail?.trackIds.map(item => item.id) || []}
+                        scrollToCurrentRef={scrollToCurrentRef}/>
         </Box>
     </>
 }
 
 
-function TopPlaylistInfo({playlist}: { playlist: PlaylistDetail | null }) {
+function TopPlaylistInfo({playlist, onLocateCurrent}: {
+    playlist: PlaylistDetail | null;
+    onLocateCurrent: () => void
+}) {
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
     const start = useMusicStore((state) => state.start)
     const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds)
@@ -95,6 +101,9 @@ function TopPlaylistInfo({playlist}: { playlist: PlaylistDetail | null }) {
                         start()
                     }}/>
                     <RoundedIconButton icon={<Menu/>} showBorder={true}/>
+                    <RoundedIconButton icon={<MyLocation/>} showBorder={true} onClick={() => {
+                        onLocateCurrent()
+                    }}/>
                 </Box>
             </Box>
         </Box>
@@ -102,7 +111,10 @@ function TopPlaylistInfo({playlist}: { playlist: PlaylistDetail | null }) {
 }
 
 
-const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
+const SeriesList = ({seriesIds, scrollToCurrentRef}: {
+    seriesIds: number[],
+    scrollToCurrentRef?: React.MutableRefObject<() => void>
+}) => {
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
     const start = useMusicStore((state) => state.start)
     const currentMusicData = useMusicStore((state) => state.currentMusicData)
@@ -113,6 +125,21 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
     const [loading, setLoading] = useState<boolean>(true);
 
     const navigate = useNavigate();
+
+    const itemRefs = useRef<Record<number, HTMLButtonElement | null>>({});
+
+    // 定义滚动到当前歌曲的函数，并通过ref暴露给父组件
+    React.useEffect(() => {
+        if (scrollToCurrentRef) {
+            scrollToCurrentRef.current = () => {
+                if (!currentMusicData?.id) return;
+                const el = itemRefs.current[currentMusicData.id];
+                if (el) {
+                    el.scrollIntoView({behavior: 'smooth', block: 'center'});
+                }
+            }
+        }
+    }, [currentMusicData, scrollToCurrentRef]);
     useEffect(() => {
         if (seriesIds.length === 0) return;
 
@@ -147,6 +174,9 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                             (
                                 <ToggleButton value={item.id}
                                               key={item.id}
+                                              ref={el => {
+                                                  itemRefs.current[item.id] = el
+                                              }}
                                               sx={
                                                   [
                                                       {
