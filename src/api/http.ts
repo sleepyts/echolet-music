@@ -1,9 +1,12 @@
 import axios from 'axios';
 
-
+const getBaseUrl = () => {
+    // 本地使用/api走vite代理 部署走环境变量
+    return import.meta.env.MODE === 'development' ? '/api' : import.meta.env.VITE_API_URL;
+}
 // Create a new instance of axios with some default settings
 const http = axios.create({
-    baseURL: '/api',
+    baseURL: getBaseUrl(),
     timeout: 1000 * 100,
     headers: {
         'Content-Type': 'application/json',
