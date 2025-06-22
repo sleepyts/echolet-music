@@ -4,6 +4,7 @@ import {PlaylistView} from "../views/PlaylistView.tsx";
 import {ArtistView} from "../views/ArtistView.tsx";
 import {AlbumView} from "../views/AlbumView.tsx";
 import {LoginView} from "../views/LoginView.tsx";
+import {SettingsView} from "../views/SettingsView.tsx";
 
 export const AppRouter = createBrowserRouter([
     {
@@ -29,6 +30,10 @@ export const AppRouter = createBrowserRouter([
             {
                 path:'login',
                 element: <LoginView/>
+            },
+            {
+                path:'settings',
+                element: <SettingsView/>
             }
         ]
     }

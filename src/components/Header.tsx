@@ -1,5 +1,5 @@
 import {Avatar, Box, Stack} from "@mui/material";
-import {DarkModeOutlined, LightModeOutlined, Login, Logout, SettingsOutlined} from '@mui/icons-material';
+import {DarkModeOutlined, GitHub, LightModeOutlined, Login, Logout, SettingsOutlined} from '@mui/icons-material';
 import {t} from "i18next";
 import {darkTheme, lightTheme} from "../theme/theme.ts";
 import RoundedIconButton from "./RoundedIconButton.tsx";
@@ -10,10 +10,13 @@ export function Header({theme, setTheme}: any) {
     const userProfile = useUserStore(state => state.userProfile);
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
-    return <Box display={"flex"} p={2} height={"5rem"} position={"sticky"} top={0} zIndex={1000}
+    return <Box display={"flex"} p={2} height={"5rem"} position={"sticky"} top={0} zIndex={1000} alignItems={"center"}
                 sx={{backgroundColor: 'background.default'}}>
-        <Stack spacing={2} direction={"row"} position={"absolute"} left={'50%'} sx={{transform: 'translateX(-50%)'}}>
-        </Stack>
+        {/*<Stack spacing={2} direction={"row"}>*/}
+        {/*    <Button variant={"outlined"} color="inherit" size={"small"}>Home</Button>*/}
+        {/*    <Button variant={"outlined"} color="inherit" size={"small"}>About</Button>*/}
+        {/*    <Button variant={"outlined"} color="inherit" size={"small"}>Contact</Button>*/}
+        {/*</Stack>*/}
 
         <Stack spacing={1} direction={"row"} ml={"auto"} alignItems={"center"}>
             {
@@ -41,7 +44,8 @@ export function Header({theme, setTheme}: any) {
                 onClick={() => {
                     setTheme(theme == lightTheme ? darkTheme : lightTheme)
                 }}/>
-            <RoundedIconButton icon={<SettingsOutlined/>}/>
+            <RoundedIconButton icon={<SettingsOutlined/>} onClick={() => navigate('/settings')}/>
+            <RoundedIconButton icon={<GitHub/>}/>
         </Stack>
     </Box>
 }

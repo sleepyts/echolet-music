@@ -21,11 +21,16 @@
   "second": "秒",
   "published-at": "发行于",
   "login": "登录",
+  "logout": "登出",
   "use-netease-scan-login": "使用网易云音乐扫码登录",
   "loading-qr-code": "正在加载二维码...",
   "qr-expired": "二维码已过期",
   "waiting-for-scan": "等待扫码...",
   "waiting-for-confirm": "等待确认...",
   "scan-success": "授权成功",
-  "login-to-get-playlist": "登录后查看歌单"
+  "login-to-get-playlist": "登录后查看歌单",
+  "language": "语言",
+  "zh-CN": "简体中文",
+  "zh-TW": "繁體中文",
+  "en-US": "English"
 }
