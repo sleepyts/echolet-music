@@ -28,7 +28,7 @@ export function MainLayout() {
                             duration: theme.transitions.duration.standard,
                         }),
                 }}>
-                    <Header theme={theme} setTheme={setTheme}/>
+                    {location.pathname !== "/login" && <Header theme={theme} setTheme={setTheme}/>}
                     <Box sx={{
                         mb: currentSong === null ? 0 : '6rem',
                         p: 2

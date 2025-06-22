@@ -44,11 +44,13 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
         }}>
 
 
-            <Box height={'5rem'} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center',}}>
+            <Box height={'5rem'}
+                 sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 2}}>
+                <img src={'/icon.webp'} alt={'icon'} width={'30px'}/>
                 {
                     open &&
                     <Typography variant={"h6"}>
-                        Azure Music
+                        Echolet Music
                     </Typography>
                 }
             </Box>
@@ -109,7 +111,8 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                             </ToggleButton>
                         </ListItem>
                     ))
-                ) : (<Box alignItems={"center"} justifyContent={"center"} sx={{height: '100%', display: 'flex',width: '100%'}}>{t('login-to-get-playlist')}</Box>)
+                ) : (<Box alignItems={"center"} justifyContent={"center"}
+                          sx={{height: '100%', display: 'flex', width: '100%'}}>{t('login-to-get-playlist')}</Box>)
                 }
             </List>
         </Drawer>
