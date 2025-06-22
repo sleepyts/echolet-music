@@ -19,7 +19,6 @@ export function LoginView() {
         const startPolling = (key: string) => {
             intervalId = setInterval(async () => {
                 const status = await getQrStatus(key); // 你自己的API
-                console.log("轮询状态", status);
 
                 if (status.code === 800) {
                     setQrStatus(t('qr-expired'));
@@ -50,7 +49,6 @@ export function LoginView() {
         };
         generateLoginQrKey().then((key) => {
             setQrKey(key);
-            console.log("key", key);
             getQrImage(key).then((img) => {
                 setQrImgBase64(img);
                 setQrStatus(t('waiting-for-scan'));

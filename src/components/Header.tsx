@@ -1,5 +1,5 @@
 import {Avatar, Box, Stack} from "@mui/material";
-import {DarkModeOutlined, LightModeOutlined, Login, SettingsOutlined} from '@mui/icons-material';
+import {DarkModeOutlined, LightModeOutlined, Login, Logout, SettingsOutlined} from '@mui/icons-material';
 import {t} from "i18next";
 import {darkTheme, lightTheme} from "../theme/theme.ts";
 import RoundedIconButton from "./RoundedIconButton.tsx";
@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 
 export function Header({theme, setTheme}: any) {
     const userProfile = useUserStore(state => state.userProfile);
-
+    const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
     return <Box display={"flex"} p={2} height={"5rem"} position={"sticky"} top={0} zIndex={1000}
                 sx={{backgroundColor: 'background.default'}}>
@@ -25,6 +25,15 @@ export function Header({theme, setTheme}: any) {
                     <>
                         <RoundedIconButton icon={<Login/>} title={t('login')} onClick={() => navigate('/login')}/>
                     </>
+            }
+            {
+                userProfile !== undefined && <>
+                    <RoundedIconButton icon={<Logout/>}
+                                       onClick={() => logout()}
+                                       title={t('logout')}
+                    />
+
+                </>
             }
             <RoundedIconButton
                 title={theme == lightTheme ? t('dark-mode') : t('light-mode')}

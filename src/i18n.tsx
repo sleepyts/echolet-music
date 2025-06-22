@@ -1,17 +1,17 @@
 import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 
 import zh from '../public/locales/zh/translation.json';
+import tw from '../public/locales/tw/translation.json';
 
 export default i18n
-    .use(LanguageDetector)  // 检测浏览器语言
     .use(initReactI18next)  // 初始化 React i18next
     .init({
         resources: {
-            zh: {translation: zh}
+            zh: {translation: zh},
+            tw: {translation: tw}
         },
-        fallbackLng: 'zh',  // 默认语言设置为中文
+        fallbackLng: 'zh',
         ns: ['translation'],
         defaultNS: 'translation',
         interpolation: {
