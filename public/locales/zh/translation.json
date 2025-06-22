@@ -13,11 +13,19 @@
   "album-ep-single": "专辑 & EP / 单曲",
   "show-all": "显示全部",
   "last-update-at": "最后更新于",
-  "album": "Album",
+  "album": "专辑",
   "ep": "EP",
-  "single": "Single",
+  "single": "单曲",
   "hour": "小时",
   "minute": "分钟",
   "second": "秒",
-  "published-at": "发行于"
+  "published-at": "发行于",
+  "login": "登录",
+  "use-netease-scan-login": "使用网易云音乐扫码登录",
+  "loading-qr-code": "正在加载二维码...",
+  "qr-expired": "二维码已过期",
+  "waiting-for-scan": "等待扫码...",
+  "waiting-for-confirm": "等待确认...",
+  "scan-success": "授权成功",
+  "login-to-get-playlist": "登录后查看歌单"
 }
