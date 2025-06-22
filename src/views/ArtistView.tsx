@@ -13,6 +13,7 @@ import {getSongDetail} from "../api/track/songApis.ts";
 import {getTransformScaleStyles} from "../css/CommonStyle.ts";
 import type {HotAlbum} from "../api/artist/ArtistAlbumModel.ts";
 import {fromTimestampToYear} from "../utils/MusicDataUtil.ts";
+import {getAlbumDetail} from "../api/album/albumApis.ts";
 
 export function ArtistView() {
     const artistId = useParams().id;
@@ -42,7 +43,9 @@ export function ArtistView() {
 
 export function ArtistsAlbums({artistId}: { artistId: number }) {
     const [albums, setAlbums] = useState<HotAlbum[]>([]);
-
+    const setCurrentMusicData = useMusicStore(state => state.setCurrentMusicData)
+    const start = useMusicStore(state => state.start)
+    const setCurrentMusicIds = useMusicStore(state => state.setCurrentMusicIds)
     const navigate = useNavigate();
     useEffect(() => {
         getArtistHotAlbums(artistId).then(res => {
@@ -68,11 +71,11 @@ export function ArtistsAlbums({artistId}: { artistId: number }) {
             ) : (
                 <Grid container spacing={3}>
                     {albums.map(album => (
-                        <Grid key={album.id} width={'15rem'} component={"div"}>
-
+                        <Grid key={album.id} width={'15%'} component={"div"}>
                             <Box>
                                 <Box
                                     sx={(theme) => ({
+                                        width:'15rem',
                                         position: 'relative', // 关键！让播放按钮定位生效
                                         borderRadius: 2,
                                         overflow: 'hidden',
@@ -125,6 +128,15 @@ export function ArtistsAlbums({artistId}: { artistId: number }) {
                                             '&:hover': {
                                                 backgroundColor: 'rgba(45,44,44,0.8)',
                                             },
+                                        }}
+                                        onClick={()=>{
+                                            getAlbumDetail(album.id).then(res1=>{
+                                                getSongDetail([res1.songs[0].id]).then(res2=>{
+                                                    setCurrentMusicData(res2.songs[0])
+                                                    setCurrentMusicIds(res1.songs.map(song=>song.id))
+                                                    start()
+                                                })
+                                            })
                                         }}
                                     >
                                         <PlayArrow fontSize="large"/>

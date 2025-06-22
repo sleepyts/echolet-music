@@ -32,6 +32,7 @@ export function PlaylistView() {
 function TopPlaylistInfo({playlist}: { playlist: PlaylistDetail | null }) {
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
     const start = useMusicStore((state) => state.start)
+    const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds)
     return <>
         <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mb: 2}}>
             <Avatar src={playlist?.coverImgUrl}
@@ -89,6 +90,7 @@ function TopPlaylistInfo({playlist}: { playlist: PlaylistDetail | null }) {
                     alignItems: 'center'
                 }}>
                     <RoundedIconButton icon={<PlayArrow/>} showBorder={true} onClick={() => {
+                        setCurrentMusicIds(playlist?.trackIds.map(item => item.id) || [])
                         setCurrentMusicData(playlist?.tracks[0])
                         start()
                     }}/>
@@ -114,7 +116,6 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
     useEffect(() => {
         if (seriesIds.length === 0) return;
 
-        setCurrentMusicIds(seriesIds);
         fetchDataByIds(seriesIds).then(data => {
             setDataList(data);
             setVisibleIds(seriesIds);
@@ -158,6 +159,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                               size={"small"}
                                               selected={currentMusicData?.id === item.id}
                                               onDoubleClick={async () => {
+                                                  setCurrentMusicIds(seriesIds);
                                                   setCurrentMusicData(item)
                                                   start()
                                               }}
