@@ -30,8 +30,8 @@ export async function generateLoginQrKey(timestamp: number = Date.now()): Promis
  * @param qrimg 是否返回Base64 默认true
  * @return qrimg 二维码的图片base64
  */
-export async function getOrImage(key: string, qrimg: boolean = true): Promise<string> {
-    const res = await http.get("/login/qr/image", {
+export async function getQrImage(key: string, qrimg: boolean = true): Promise<string> {
+    const res = await http.get("/login/qr/create", {
         params: {key, qrimg}
     });
     return res.data.qrimg as string;
@@ -43,7 +43,7 @@ export async function getOrImage(key: string, qrimg: boolean = true): Promise<st
  * @param timestamp
  * @param noCookie
  */
-export async function getOrStatus(key: string, timestamp: number = Date.now(), noCookie: boolean = true): Promise<QrStatusResponse> {
+export async function getQrStatus(key: string, timestamp: number = Date.now(), noCookie: boolean = true): Promise<QrStatusResponse> {
     return http.get("/login/qr/check", {
         params: {key, timestamp, noCookie}
     });
