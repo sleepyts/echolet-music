@@ -48,3 +48,13 @@ export async function getQrStatus(key: string, timestamp: number = Date.now(), n
         params: {key, timestamp, noCookie}
     });
 }
+
+/**
+ * 登出
+ * @param timestamp
+ */
+export async function logout(timestamp: number = Date.now()): Promise<void> {
+    return http.get("/logout", {
+        params: {timestamp}
+    })
+}
