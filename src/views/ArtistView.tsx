@@ -170,7 +170,16 @@ export function ArtistInfo({artistDetail}: { artistDetail: ArtistData | undefine
                 >{artistDetail.artist.name}</Typography>
                 <Typography variant="subtitle2" color="textSecondary">{artistDetail.artist.musicSize} {t('song-count')}
                     · {artistDetail.artist.albumSize} {t('album-count')} · {artistDetail.artist.mvSize} {t('mv-count')}</Typography>
-                <Typography variant="body2" color="text.secondary">{artistDetail.artist.briefDesc}</Typography>
+                <Typography variant="body2" color="text.secondary"
+                            sx={{
+                                display: '-webkit-box',
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                WebkitLineClamp: 2, // 限制最大3行
+                            }}
+                >
+                    {artistDetail.artist.briefDesc}
+                </Typography>
                 <Stack direction="row" spacing={2}>
                     <RoundedIconButton showBorder={true} icon={<FavoriteBorder/>}/>
                 </Stack>
