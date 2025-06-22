@@ -55,7 +55,7 @@ export function fromTimestampToTime(timestamp: number): string {
  * @param raw
  */
 export function parseLrc(raw: string): LyricLine[] {
-    const timeTagRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?]/g;
+    const timeTagRegex = /\[(\d{2})[:.](\d{2})(?:[:.](\d{2,3}))?]/g;
     const lines = raw.split('\n');
     const result: LyricLine[] = [];
 
