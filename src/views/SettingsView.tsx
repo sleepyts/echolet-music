@@ -22,7 +22,7 @@ export function SettingsView() {
                 <Typography variant="body1" sx={{mr: 2}}>
                     {t("language")}
                 </Typography>
-                <Select variant="outlined" value={language} onChange={e => {
+                <Select variant="standard" value={language} onChange={e => {
                     setLanguage(e.target.value)
                 }}>
                     <MenuItem value="zh-CN">{t('zh-CN')}</MenuItem>
