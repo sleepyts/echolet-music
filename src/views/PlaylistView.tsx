@@ -34,7 +34,14 @@ function TopPlaylistInfo({playlist}: { playlist: PlaylistDetail | null }) {
     const start = useMusicStore((state) => state.start)
     return <>
         <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mb: 2}}>
-            <Avatar src={playlist?.coverImgUrl} sx={{width: '15rem', height: '15rem', mr: 2}} variant={"rounded"}/>
+            <Avatar src={playlist?.coverImgUrl}
+                    sx={{
+                        width: '15rem',
+                        height: '15rem',
+                        mr: 4,
+                        boxShadow: '3px 3px 4px 0px rgba(0,0,0,0.3)'
+                    }}
+                    variant={"rounded"}/>
             <Box
                 sx={{
                     display: 'flex',
