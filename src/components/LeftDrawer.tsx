@@ -8,6 +8,7 @@ import {t} from "i18next";
 import RoundedIconButton from "./RoundedIconButton.tsx";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
 import {getTransformScaleStyles} from "../css/CommonStyle.ts";
+import {useUserStore} from "../store/UserStore.ts";
 
 
 export const drawerWidth = 240;
@@ -24,11 +25,15 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
     const setCurrentPlaylistId = useMusicStore((state) => state.setCurrentPlaylistId)
+    const userProfile = useUserStore(state => state.userProfile)
     useEffect(() => {
-        getUserPlaylistInfo(430820620).then(res => {
-            setPlaylists(res.playlist)
-        })
-    }, []);
+        if (userProfile !== undefined) {
+            getUserPlaylistInfo(userProfile?.userId || 0).then(res => {
+                setPlaylists(res.playlist)
+            })
+        }
+
+    }, [userProfile]);
     return (
         <Drawer open={open} variant={"permanent"} PaperProps={{
             sx: {
@@ -72,7 +77,7 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                 overflow: 'hidden',
                 transition: 'opacity 0.3s ease',
             }}>
-                {
+                {userProfile ? (
                     playlists.map(playlist => (
                         <ListItem key={playlist.id}
                                   sx={{p: 0}}
@@ -104,6 +109,7 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                             </ToggleButton>
                         </ListItem>
                     ))
+                ) : (<Box alignItems={"center"} justifyContent={"center"} sx={{height: '100%', display: 'flex',width: '100%'}}>{t('login-to-get-playlist')}</Box>)
                 }
             </List>
         </Drawer>
