@@ -107,8 +107,11 @@ function nextPlayMode(mode: PlayMode) {
  * @param currentTime
  */
 function getRencentLyricIndex(lyric: LyricLine[], currentTime: number): number {
+    if (lyric[lyric.length - 1].time <= currentTime) {
+        return lyric.length - 1;
+    }
     return lyric.findIndex((line, i) => {
-        return currentTime <= line.time && (i === 0 || currentTime >= lyric[i - 1].time);
+        return currentTime <= line.time && (i === 0 || currentTime > lyric[i - 1].time);
     }) - 1;
 
 }
