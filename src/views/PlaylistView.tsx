@@ -1,14 +1,14 @@
 import {t} from "i18next";
 import {useMusicStore} from "../store/MusicStore"
-import {Avatar, Box, Input, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
+import {Avatar, Box, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {getPlaylistDetail} from "../api/playlist/playListApis.ts";
 import type {PlaylistDetail} from "../api/playlist/PlayListDetailResponse.ts";
 import type {Song} from "../api/track/SongDetailResponse.ts";
 import {getSongDetail} from "../api/track/songApis.ts";
-import {fromMsToTime} from "../utils/MusicDataUtil.ts";
+import {fromMsToTime, fromTimestampToTime} from "../utils/MusicDataUtil.ts";
 import {useInView} from "react-intersection-observer";
-import {Menu, PlayArrow, Search} from "@mui/icons-material";
+import {Menu, PlayArrow} from "@mui/icons-material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
 import {useNavigate} from "react-router-dom";
 
@@ -30,6 +30,8 @@ export function PlaylistView() {
 
 
 function TopPlaylistInfo({playlist}: { playlist: PlaylistDetail | null }) {
+    const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
+    const start = useMusicStore((state) => state.start)
     return <>
         <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mb: 2}}>
             <Avatar src={playlist?.coverImgUrl} sx={{width: '15rem', height: '15rem', mr: 2}} variant={"rounded"}/>
@@ -43,19 +45,47 @@ function TopPlaylistInfo({playlist}: { playlist: PlaylistDetail | null }) {
                     height: '15rem',
                 }}
             >
+                <Typography variant="h5" fontWeight="bold">
+                    {playlist?.name}
+                </Typography>
+
                 <Box>
-                    <Typography variant="h5" fontWeight="bold">
-                        {playlist?.name}
+                    <Typography>
+                        by
+                        <Link href="#" variant="body2" color={"inherit"} ml={1}
+                              underline={"hover"}>{playlist?.creator.nickname}</Link>
                     </Typography>
-                    <Typography variant="body2" mt={1}>
-                        {playlist?.description}
+                    <Typography color="textSecondary" variant={"caption"}>
+                        {t('last-update-at') + " " + fromTimestampToTime(playlist?.updateTime as number) + " · " + playlist?.trackCount + t('song-count')}
                     </Typography>
                 </Box>
 
-                <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                    <Link href="#" variant="body2" color={"inherit"}
-                          underline={"hover"}>{playlist?.creator.nickname}</Link>
-                    <Typography variant="body2" ml={1}>{playlist?.trackCount + t('song-count')}</Typography>
+                <Typography variant="caption" mt={1} color={"textSecondary"}
+                            sx={{
+                                display: '-webkit-box',
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                WebkitLineClamp: 2, // 限制最大3行
+                            }}>
+                    {playlist?.description}
+                </Typography>
+
+                <Box sx={{
+                    position: "sticky",
+                    top: '5rem',
+                    zIndex: 1,
+                    backgroundColor: "background.paper",
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 2,
+                    mb: 2,
+                    alignItems: 'center'
+                }}>
+                    <RoundedIconButton icon={<PlayArrow/>} showBorder={true} onClick={() => {
+                        setCurrentMusicData(playlist?.tracks[0])
+                        start()
+                    }}/>
+                    <RoundedIconButton icon={<Menu/>} showBorder={true}/>
                 </Box>
             </Box>
         </Box>
@@ -72,7 +102,6 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
     const [dataList, setDataList] = useState<Song[]>([]);
 
     const [loading, setLoading] = useState<boolean>(true);
-    const [searchText, setSearchText] = useState<string>("");
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -99,30 +128,6 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
 
     return (
         <Box sx={{p: 1}}>
-            <Box sx={{
-                position: "sticky",
-                top: '5rem',
-                zIndex: 1,
-                backgroundColor: "background.paper",
-                display: 'flex',
-                flexDirection: 'row',
-                gap: 2,
-                mb: 2,
-                alignItems: 'center'
-            }}>
-                <RoundedIconButton icon={<PlayArrow/>} onClick={() => {
-                    setCurrentMusicData(dataList[0])
-                    start()
-                }}/>
-                <RoundedIconButton icon={<Menu/>}/>
-                <Input startAdornment={<Search fontSize="small"/>}
-                       placeholder={t('search')}
-                       onChange={(e) => {
-                           setSearchText(e.target.value)
-                       }}
-                />
-            </Box>
-
             <Stack direction={"column"} spacing={2}>
                 {
                     loading ? <>
@@ -131,35 +136,40 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                         ))}
                     </> : <>
                         {dataList.map(item =>
-                                (searchText === "" || item.name.toLowerCase().includes(searchText.toLowerCase()) || item.ar.some(artist => artist.name.toLowerCase().includes(searchText.toLowerCase()))) && (
-                                    <ToggleButton value={item.id}
-                                                  key={item.id}
-                                                  sx={
-                                                      [
-                                                          {
-                                                              border: 'none',
-                                                              justifyContent: "start",
-                                                              display: "flex",
-                                                          },
-                                                      ]
-                                                  }
-                                                  size={"small"}
-                                                  selected={currentMusicData?.id === item.id}
-                                                  onDoubleClick={async () => {
-                                                      setCurrentMusicData(item)
-                                                      start()
-                                                  }}
-                                    >
-                                        <LazyAvatar src={item.al.picUrl}/>
-                                        <Box sx={{flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
-                                            <Typography variant="body2" fontWeight="bold" color={"textPrimary"} noWrap
-                                                        textTransform="capitalize">
-                                                {item.name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary" noWrap
-                                                        textTransform="capitalize">
-                                                {item.ar.slice(0, 5).map((artist, index) => (
-                                                    <span key={artist.id || artist.name}>
+                            (
+                                <ToggleButton value={item.id}
+                                              key={item.id}
+                                              sx={
+                                                  [
+                                                      {
+                                                          border: 'none',
+                                                          justifyContent: "start",
+                                                          display: "flex",
+                                                      },
+                                                  ]
+                                              }
+                                              size={"small"}
+                                              selected={currentMusicData?.id === item.id}
+                                              onDoubleClick={async () => {
+                                                  setCurrentMusicData(item)
+                                                  start()
+                                              }}
+                                >
+                                    <LazyAvatar src={item.al.picUrl}/>
+                                    <Box sx={{
+                                        flex: 2,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'flex-start'
+                                    }}>
+                                        <Typography variant="body2" fontWeight="bold" color={"textPrimary"} noWrap
+                                                    textTransform="capitalize">
+                                            {item.name}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" noWrap
+                                                    textTransform="capitalize">
+                                            {item.ar.slice(0, 5).map((artist, index) => (
+                                                <span key={artist.id || artist.name}>
                                                     <Link
                                                         underline="hover"
                                                         color="textSecondary"
@@ -170,24 +180,24 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                                     >
                                                         {artist.name}
                                                     </Link>
-                                                        {index !== 4 && ' / '}
+                                                    {index !== 4 && ' / '}
                                                     </span>
-                                                ))}
-                                            </Typography>
-                                        </Box>
-                                        <Box sx={{alignItems: 'flex-start', justifyContent: 'flex-start', flex: 1.5}}>
-                                            <Typography variant="body2" color="textPrimary" noWrap
-                                                        textTransform="capitalize">
-                                                {item.al.name}
-                                            </Typography>
-                                        </Box>
-                                        <Box sx={{textAlign: 'right', width: '100%', alignItems: 'center', flex: 1}}>
-                                            <Typography variant="body2" color="textPrimary" noWrap>
-                                                {fromMsToTime(item.dt)}
-                                            </Typography>
-                                        </Box>
-                                    </ToggleButton>
-                                )
+                                            ))}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{alignItems: 'flex-start', justifyContent: 'flex-start', flex: 1.5}}>
+                                        <Typography variant="body2" color="textPrimary" noWrap
+                                                    textTransform="capitalize">
+                                            {item.al.name}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{textAlign: 'right', width: '100%', alignItems: 'center', flex: 1}}>
+                                        <Typography variant="body2" color="textPrimary" noWrap>
+                                            {fromMsToTime(item.dt)}
+                                        </Typography>
+                                    </Box>
+                                </ToggleButton>
+                            )
                         )}
                     </>
                 }

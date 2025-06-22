@@ -30,6 +30,22 @@ export function fromTimestampToYear(timestamp: number): string {
     return date.getFullYear().toString();
 }
 
+export function fromTimestampToTime(timestamp: number): string {
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+        return "Invalid date";
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // getMonth() 从0开始
+    const day = date.getDate();
+
+    // 补零处理
+    const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+
+    return `${year}年${pad(month)}月${pad(day)}日`;
+}
+
 /**
  * 歌词转换函数
  * "[00:00.000] 作词 : 张国祥 => { time: 歌词时间，单位秒，text: 歌词内容}

@@ -23,7 +23,7 @@ import {useNavigate} from "react-router-dom";
 function GlobalPlayer() {
     const currentSong = useMusicStore(state => state.currentMusicData);
     const navigate = useNavigate()
-    return (currentSong !== null &&
+    return (currentSong !== null && currentSong !== undefined &&
         <Box sx={{
             position: "fixed",
             bottom: 0,
@@ -35,9 +35,9 @@ function GlobalPlayer() {
         }}>
             <Box padding={2} sx={{display: 'flex', alignItems: 'center', width: '100%', m: 'auto'}}>
                 <Box sx={{display: 'flex', alignItems: 'center'}} flex={1}>
-                    <img src={currentSong?.al.picUrl} alt={currentSong?.name} width={64} height={64}/>
-                    <Box sx={{display: 'flex', flexDirection: 'column'}}>
-                        <Typography sx={{marginLeft: 2, fontSize: 12}}>{currentSong?.name}</Typography>
+                    <img src={currentSong?.al?.picUrl} alt={currentSong?.name} width={64} height={64}/>
+                    <Box sx={{display: 'flex', flexDirection: 'column'}} ml={2}>
+                        <Typography fontSize={14}>{currentSong?.name}</Typography>
                         <Typography variant="body2" color="text.secondary" noWrap
                                     textTransform="capitalize">
                             {currentSong?.ar.map((artist, index) => (
@@ -48,6 +48,11 @@ function GlobalPlayer() {
                                                         variant="caption"
                                                         onClick={() => {
                                                             navigate('/artist/' + artist.id)
+                                                        }}
+                                                        sx={{
+                                                            '&:hover':{
+                                                                cursor: 'pointer',
+                                                            }
                                                         }}
                                                     >
                                                         {artist.name}
