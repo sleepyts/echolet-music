@@ -14,7 +14,7 @@ export function LoginView() {
 
     const navigate = useNavigate();
     useEffect(() => {
-        let intervalId: number = 123;
+        let intervalId: ReturnType<typeof setInterval>;
 
         const startPolling = (key: string) => {
             intervalId = setInterval(async () => {
