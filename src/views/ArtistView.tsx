@@ -139,7 +139,7 @@ export function ArtistsAlbums({artistId}: { artistId: number }) {
                                         </Link>
                                     </Typography>
                                     <Typography variant="caption" color="text.secondary">
-                                        {fromTimestampToYear(album.publishTime)}
+                                        {album.size >= 8 ? t('album') : album.size >= 2 ? t('ep') : t('single')}-{fromTimestampToYear(album.publishTime)}
                                     </Typography>
                                 </Box>
                             </Box>
