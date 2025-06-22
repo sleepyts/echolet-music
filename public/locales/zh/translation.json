@@ -15,5 +15,8 @@
   "last-update-at": "最后更新于",
   "album": "Album",
   "ep": "EP",
-  "single": "Single"
+  "single": "Single",
+  "hour": "小时",
+  "minute": "分钟",
+  "second": "秒"
 }

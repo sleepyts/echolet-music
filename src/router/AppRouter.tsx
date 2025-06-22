@@ -2,6 +2,7 @@ import {createBrowserRouter} from "react-router-dom";
 import {MainLayout} from "../layout/MainLayout.tsx";
 import {PlaylistView} from "../views/PlaylistView.tsx";
 import {ArtistView} from "../views/ArtistView.tsx";
+import {AlbumView} from "../views/AlbumView.tsx";
 
 export const AppRouter = createBrowserRouter([
     {
@@ -13,12 +14,16 @@ export const AppRouter = createBrowserRouter([
                 element: <></>
             },
             {
-                path:'playlist/:id',
+                path: 'playlist/:id',
                 element: <PlaylistView/>
             },
             {
-                path:'artist/:id',
+                path: 'artist/:id',
                 element: <ArtistView/>
+            },
+            {
+                path: 'album/:id',
+                element: <AlbumView/>
             }
         ]
     }

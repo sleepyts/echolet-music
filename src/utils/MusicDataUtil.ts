@@ -1,3 +1,4 @@
+import {t} from "i18next";
 import type {LyricLine} from "../api/track/SongLyricResponse.ts";
 
 export function fromMsToTime(ms: number): string {
@@ -44,6 +45,26 @@ export function fromTimestampToTime(timestamp: number): string {
     const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
 
     return `${year}年${pad(month)}月${pad(day)}日`;
+}
+
+/**
+ * 格式化一系列歌曲的时长
+ * @param durations 歌曲时长数组 单位为毫秒
+ * @returns 格式化后的时长字符串 "1小时30分钟"
+ */
+export function formatTotalDuration(durations: number[]): string {
+    const totalMs = durations.reduce((sum, ms) => sum + ms, 0);
+    const totalMinutes = Math.floor(totalMs / 1000 / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    let result = "";
+    if (hours > 0) {
+        result += `${hours}${t('hour')} `;
+    }
+    result += `${minutes}${t('minute')}`;
+
+    return result.trim();
 }
 
 /**

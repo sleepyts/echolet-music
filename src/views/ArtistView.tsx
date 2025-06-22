@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import type {ArtistData} from "../api/artist/ArtistDetailModel.ts";
 import {useEffect, useState} from "react";
 import {getArtistDetail, getArtistHotAlbums, getArtistHotSongs} from "../api/artist/artistApis.ts";
@@ -43,6 +43,7 @@ export function ArtistView() {
 export function ArtistsAlbums({artistId}: { artistId: number }) {
     const [albums, setAlbums] = useState<HotAlbum[]>([]);
 
+    const navigate = useNavigate();
     useEffect(() => {
         getArtistHotAlbums(artistId).then(res => {
             setAlbums(res);
@@ -132,7 +133,7 @@ export function ArtistsAlbums({artistId}: { artistId: number }) {
                                             color="textPrimary"
                                             sx={{'&:hover': {cursor: 'pointer'}}}
                                             onClick={() => {
-                                                // TODO: handle click
+                                                navigate(`/album/${album.id}`)
                                             }}
                                         >
                                             {album.name}
