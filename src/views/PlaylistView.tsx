@@ -11,6 +11,7 @@ import {useInView} from "react-intersection-observer";
 import {Menu, MyLocation, PlayArrow} from "@mui/icons-material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
 import {useNavigate} from "react-router-dom";
+import {flushSync} from "react-dom";
 
 export function PlaylistView() {
     const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
@@ -152,9 +153,11 @@ const SeriesList = ({seriesIds, scrollToCurrentRef}: {
         });
 
         return () => {
-            setDataList([])
-            setVisibleIds([])
-            setLoading(true)
+
+            // 强制阻塞进行数据更改
+            flushSync(() => setDataList([]));
+            flushSync(() => setVisibleIds([]));
+            flushSync(() => setLoading(true));
         }
     }, [seriesIds, setCurrentMusicIds]);
 
