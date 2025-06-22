@@ -1,8 +1,8 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import type {AlbumDetail, AlbumSong} from "../api/album/AlbumDetailModel.ts";
 import {useEffect, useState} from "react";
 import {getAlbumDetail} from "../api/album/albumApis.ts";
-import {Avatar, Box, Stack, ToggleButton, Typography} from "@mui/material";
+import {Avatar, Box, Link, Stack, ToggleButton, Typography} from "@mui/material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
 import {FavoriteBorder, PlayArrow} from "@mui/icons-material";
 import {t} from "i18next";
@@ -91,7 +91,7 @@ function AlbumSongs({album, albumSongs}: { album: AlbumDetail | undefined, album
                 }
             </Stack>
             <Typography variant="caption" color="textSecondary">
-                {"发行于"} {fromTimestampToTime(album?.publishTime as number)}
+                {t('published-at')} {fromTimestampToTime(album?.publishTime as number)}
             </Typography>
         </Box>
     </>
@@ -101,6 +101,8 @@ function AlbumTopInfo({album, albumSongs}: { album: AlbumDetail | undefined, alb
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData);
     const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds)
     const start = useMusicStore((state) => state.start);
+
+    const navigate = useNavigate();
     return <>
         <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mb: 2}}>
             <Avatar src={album?.picUrl}
@@ -127,10 +129,27 @@ function AlbumTopInfo({album, albumSongs}: { album: AlbumDetail | undefined, alb
 
                 <Box>
 
-                    <Typography>
-                        <Typography variant="body2" color="textPrimary">
-                            {albumSongs?.length >= 8 ? t('album') : albumSongs?.length >= 2 ? t('ep') : t('single')}{" by "}
-                            {album?.artists.map(artist => artist.name).join(", ")}
+                    <Typography variant="body2" color="textPrimary" display={"flex"} gap={0.5} alignItems={"center"}>
+                        {albumSongs?.length >= 8 ? t('album') : albumSongs?.length >= 2 ? t('ep') : t('single')}
+                        <Typography color={"inherit"} variant={"caption"}>{"by"}</Typography>
+                        <Typography variant="body2" color="text.secondary" noWrap
+                                    textTransform="capitalize">
+                            <Link
+                                underline="hover"
+                                color="textPrimary"
+                                fontWeight="bold"
+                                variant="caption"
+                                onClick={() => {
+                                    navigate('/artist/' + album?.artist.id)
+                                }}
+                                sx={{
+                                    '&:hover': {
+                                        cursor: 'pointer',
+                                    }
+                                }}
+                            >
+                                {album?.artist.name}
+                            </Link>
                         </Typography>
                     </Typography>
                     <Typography color="textSecondary" variant={"caption"}>

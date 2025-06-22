@@ -102,7 +102,12 @@ export function ArtistsAlbums({artistId}: { artistId: number }) {
                                     })}
                                 >
                                     {/* 图片组件 */}
-                                    <LazyAvatar src={album.picUrl || ""} size={'15rem'}/>
+                                    <Box onClick={()=>{
+                                        navigate(`/album/${album.id}`)
+                                    }}>
+                                        <LazyAvatar src={album.picUrl || ""} size={'15rem'}/>
+
+                                    </Box>
 
                                     {/* 播放按钮 */}
                                     <IconButton

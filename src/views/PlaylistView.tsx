@@ -195,7 +195,12 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                     <Box sx={{alignItems: 'flex-start', justifyContent: 'flex-start', flex: 1.5}}>
                                         <Typography variant="body2" color="textPrimary" noWrap
                                                     textTransform="capitalize">
-                                            {item.al.name}
+                                            <Link underline="hover"
+                                                  color="textPrimary"
+                                                  variant="caption"
+                                                  onClick={() => {
+                                                      navigate('/album/' + item.al.id)
+                                                  }}>{item.al.name}</Link>
                                         </Typography>
                                     </Box>
                                     <Box sx={{textAlign: 'right', width: '100%', alignItems: 'center', flex: 1}}>
