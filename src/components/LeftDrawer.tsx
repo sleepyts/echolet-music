@@ -11,7 +11,7 @@ import {getTransformScaleStyles} from "../css/CommonStyle.ts";
 
 
 export const drawerWidth = 240;
-export const collapsedWidth = 72;
+export const collapsedWidth = 60;
 
 interface LeftDrawerProps {
     open: boolean;
@@ -97,7 +97,8 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                                     navigate('/playlist/' + playlist.id)
                                 }}
                             >
-                                <Avatar src={playlist.coverImgUrl} variant={"rounded"}/>
+                                <Avatar src={playlist.coverImgUrl} variant={"rounded"}
+                                        sx={{width: '2rem', height: '2rem'}}/>
                                 {open && <Typography fontSize={"0.8rem"} color={"textPrimary"} textTransform={"none"}
                                                      ml={1} noWrap={true}>{playlist.name}</Typography>}
                             </ToggleButton>

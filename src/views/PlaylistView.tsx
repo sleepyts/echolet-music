@@ -158,7 +158,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary" noWrap
                                                         textTransform="capitalize">
-                                                {item.ar.map((artist, index) => (
+                                                {item.ar.slice(0, 5).map((artist, index) => (
                                                     <span key={artist.id || artist.name}>
                                                     <Link
                                                         underline="hover"
@@ -170,7 +170,7 @@ const SeriesList = ({seriesIds}: { seriesIds: number[] }) => {
                                                     >
                                                         {artist.name}
                                                     </Link>
-                                                        {index < item.ar.length - 1 && ' / '}
+                                                        {index !== 4 && ' / '}
                                                     </span>
                                                 ))}
                                             </Typography>
