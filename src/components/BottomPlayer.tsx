@@ -125,7 +125,7 @@ export function RightController({canExpand = true}: { canExpand?: boolean }) {
     const volume = useMusicStore(state => state.volume);
     const changeVolume = useMusicStore(state => state.changeVolume);
 
-    const [prevVolume, setPrevVolume] = useState(1)
+    const [prevVolume, setPrevVolume] = useState(volume)
     const [expandDetail, setExpandDetail] = useState<boolean>(false)
     return <>
         <PlayerDetail expand={expandDetail} setExpand={setExpandDetail}/>
