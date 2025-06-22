@@ -316,7 +316,9 @@ export const useMusicStore = create<MusicState & MusicAction & AudioAction & Aud
         }),
         {
             name: "music-store",
+            version: 1,
             partialize: (state) => ({
+                name: "music-store",
                 currentPlaylistId: state.currentPlaylistId,
                 currentMusicData: state.currentMusicData,
                 currentMusicIds: state.currentMusicIds,
