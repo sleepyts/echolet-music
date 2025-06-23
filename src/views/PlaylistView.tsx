@@ -31,7 +31,7 @@ export function PlaylistView() {
     );
 
     return <>
-        <Box p={2} sx={{display: 'flex', flexDirection: 'column'}}>
+        <Box sx={{display: 'flex', flexDirection: 'column'}}>
             <Box position="sticky" top={'5rem'} zIndex={1} sx={{backgroundColor: "background.paper", mb: 2}}>
                 <TopPlaylistInfo playlist={currentPlaylistDetail} onLocateCurrent={() => scrollToCurrentRef.current()}
                                  searchText={searchText} setSearchText={setSearchText}/>

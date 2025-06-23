@@ -36,7 +36,7 @@ export function ArtistView() {
         }
     }, [artistId]);
     return <>
-        <Box p={2} sx={{display: "flex", flexDirection: "column"}}>
+        <Box sx={{display: "flex", flexDirection: "column"}}>
             <ArtistInfo artistDetail={artistDetail} loading={loading}/>
             <ArtistHotSong artistId={Number(artistId)}/>
             <ArtistsAlbums artistId={Number(artistId)}/>
@@ -317,7 +317,7 @@ function ArtistHotSong({artistId}: { artistId: number | undefined }) {
             <RoundedIconButton
                 title={t('show-all')}
                 icon={<ReadMore/>}
-                onClick={() =>navigate(`/artist/songs/${artistId}`) }
+                onClick={() => navigate(`/artist/songs/${artistId}`)}
             />
         </Box>
 
