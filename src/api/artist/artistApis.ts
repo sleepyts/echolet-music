@@ -35,9 +35,9 @@ export async function getArtistHotSongs(id: number): Promise<Song[]> {
  * 获取歌手专辑
  * @param id 歌手 id
  * @param offset 偏移数量 , 用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认 为 0
- * @param limit 取出数量 , 默认为 12
+ * @param limit 取出数量
  */
-export async function getArtistHotAlbums(id: number, offset: number | undefined = undefined, limit: number | undefined = 12): Promise<HotAlbum[]> {
+export async function getArtistHotAlbums(id: number, offset: number | undefined = undefined, limit: number | undefined = 100): Promise<HotAlbum[]> {
     const res = await http.get("/artist/album", {
         params: {id: id, offset: offset, limit: limit},
     })

@@ -71,10 +71,10 @@ export function ArtistsAlbums({artistId}: { artistId: number }) {
                 <Typography variant="h5" fontWeight="bold" color="text.primary">
                     {t("album-ep-single")}
                 </Typography>
-                <RoundedIconButton
-                    title={t('show-all')}
-                    icon={<ReadMore/>}
-                />
+                {/*<RoundedIconButton*/}
+                {/*    title={t('show-all')}*/}
+                {/*    icon={<ReadMore/>}*/}
+                {/*/>*/}
             </Box>
 
 

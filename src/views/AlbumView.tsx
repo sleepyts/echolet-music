@@ -9,6 +9,7 @@ import {t} from "i18next";
 import {formatTotalDuration, fromMsToTime, fromTimestampToTime, fromTimestampToYear} from "../utils/MusicDataUtil.ts";
 import {useMusicStore} from "../store/MusicStore.ts";
 import {getSongDetail} from "../api/track/songApis.ts";
+import {CustomDialog} from "../components/CustomDialog.tsx";
 
 export function AlbumView() {
     const albumId = useParams().id;
@@ -103,6 +104,7 @@ function AlbumTopInfo({album, albumSongs}: { album: AlbumDetail | undefined, alb
     const start = useMusicStore((state) => state.start);
 
     const navigate = useNavigate();
+    const [openDescription, setOpenDescription] = useState<boolean>(false);
     return <>
         <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mb: 2}}>
             <Avatar src={album?.picUrl}
@@ -164,11 +166,21 @@ function AlbumTopInfo({album, albumSongs}: { album: AlbumDetail | undefined, alb
                                 display: '-webkit-box',
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
-                                WebkitLineClamp: 2, // 限制最大3行
-                            }}>
+                                WebkitLineClamp: 2,
+                                '&:hover': {
+                                    cursor: 'pointer',
+                                    opacity: '0.8',
+                                    transition: 'all 0.1s ease',
+                                }
+                            }}
+                            onClick={() => {
+                                setOpenDescription(true)
+                            }}
+                >
                     {album?.description}
                 </Typography>
-
+                <CustomDialog open={openDescription} setOpen={setOpenDescription} title={t('album-desc')}
+                              content={album?.description || ""}/>
                 <Box sx={{
                     position: "sticky",
                     top: '5rem',
