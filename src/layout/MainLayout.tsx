@@ -31,7 +31,7 @@ export function MainLayout() {
                     {location.pathname !== "/login" && <Header theme={theme} setTheme={setTheme}/>}
                     <Box sx={{
                         mb: currentSong === null ? 0 : '6rem',
-                        p: 2
+                        p: 4
                     }}>
                         <Outlet/>
 

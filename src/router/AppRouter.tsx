@@ -5,6 +5,7 @@ import {ArtistView} from "../views/ArtistView.tsx";
 import {AlbumView} from "../views/AlbumView.tsx";
 import {LoginView} from "../views/LoginView.tsx";
 import {SettingsView} from "../views/SettingsView.tsx";
+import {ArtistSongsView} from "../views/ArtistSongsView.tsx";
 
 export const AppRouter = createBrowserRouter([
     {
@@ -24,15 +25,19 @@ export const AppRouter = createBrowserRouter([
                 element: <ArtistView/>
             },
             {
+                path: 'artist/songs/:id',
+                element: <ArtistSongsView/>
+            },
+            {
                 path: 'album/:id',
                 element: <AlbumView/>
             },
             {
-                path:'login',
+                path: 'login',
                 element: <LoginView/>
             },
             {
-                path:'settings',
+                path: 'settings',
                 element: <SettingsView/>
             }
         ]

@@ -276,6 +276,7 @@ function ArtistHotSong({artistId}: { artistId: number | undefined }) {
     const start = useMusicStore(state => state.start)
 
     const [songLoading, setSongLoading] = useState<boolean>(true)
+    const navigate = useNavigate();
     useEffect(() => {
         if (typeof artistId !== "number") return;
         setSongLoading(true);
@@ -316,6 +317,7 @@ function ArtistHotSong({artistId}: { artistId: number | undefined }) {
             <RoundedIconButton
                 title={t('show-all')}
                 icon={<ReadMore/>}
+                onClick={() =>navigate(`/artist/songs/${artistId}`) }
             />
         </Box>
 
