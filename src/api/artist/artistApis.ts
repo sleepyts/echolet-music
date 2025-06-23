@@ -2,6 +2,7 @@ import type {ArtistDetailResponse} from "./ArtistDetailModel.ts";
 import http from "../http.ts";
 import type {Song} from "../track/SongDetailResponse.ts";
 import type {HotAlbum} from "./ArtistAlbumModel.ts";
+import type {ArtistSongsResponse} from "./ArtistSongsResponse.ts";
 
 
 /**
@@ -43,4 +44,17 @@ export async function getArtistHotAlbums(id: number, offset: number | undefined 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     return res.hotAlbums
+}
+
+/**
+ * 获取歌手全部歌曲
+ * @param id 歌手id
+ * @param limit 取出歌单数量 , 默认为 20
+ * @param offset  偏移数量 , 用于分页 , 如 :( 评论页数 -1)*limit
+ * @param order hot ,time 按照热门或者时间排序
+ */
+export async function getArtistSongs(id: number, limit: number | undefined = 20, offset: number | undefined = undefined, order: string | undefined = "hot"): Promise<ArtistSongsResponse> {
+    return http.get("/artist/songs", {
+        params: {id: id, limit: limit, offset: offset, order: order}
+    })
 }
