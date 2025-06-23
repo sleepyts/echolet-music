@@ -1,7 +1,7 @@
 import {t} from "i18next";
 import {useMusicStore} from "../store/MusicStore"
 import {Avatar, Box, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {getPlaylistDetail} from "../api/playlist/playListApis.ts";
 import type {PlaylistDetail} from "../api/playlist/PlayListDetailResponse.ts";
 import type {Song} from "../api/track/SongDetailResponse.ts";
@@ -12,32 +12,44 @@ import {Menu, MyLocation, PlayArrow} from "@mui/icons-material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
 import {useNavigate} from "react-router-dom";
 import {CustomDialog} from "../components/CustomDialog.tsx";
+import {Search} from "../components/Search.tsx";
 
 export function PlaylistView() {
     const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
     const [currentPlaylistDetail, setCurrentPlaylistDetail] = useState<PlaylistDetail | null>(null);
     const scrollToCurrentRef = React.useRef<() => void>(() => {
     });
+    const [searchText, setSearchText] = useState("");
     useEffect(() => {
         getPlaylistDetail(currentPlaylistId).then((res) => {
             setCurrentPlaylistDetail(res.playlist)
         })
     }, [currentPlaylistId]);
+    const seriesIds = useMemo(
+        () => currentPlaylistDetail?.trackIds.map(item => item.id) || [],
+        [currentPlaylistDetail?.trackIds]
+    );
+
     return <>
         <Box p={2} sx={{display: 'flex', flexDirection: 'column'}}>
             <Box position="sticky" top={'5rem'} zIndex={1} sx={{backgroundColor: "background.paper", mb: 2}}>
-                <TopPlaylistInfo playlist={currentPlaylistDetail} onLocateCurrent={() => scrollToCurrentRef.current()}/>
+                <TopPlaylistInfo playlist={currentPlaylistDetail} onLocateCurrent={() => scrollToCurrentRef.current()}
+                                 searchText={searchText} setSearchText={setSearchText}/>
             </Box>
-            <SeriesList seriesIds={currentPlaylistDetail?.trackIds.map(item => item.id) || []}
-                        scrollToCurrentRef={scrollToCurrentRef}/>
+            <SeriesList seriesIds={seriesIds}
+                        scrollToCurrentRef={scrollToCurrentRef}
+                        searchInput={searchText}
+            />
         </Box>
     </>
 }
 
 
-function TopPlaylistInfo({playlist, onLocateCurrent}: {
+function TopPlaylistInfo({playlist, onLocateCurrent, searchText, setSearchText}: {
     playlist: PlaylistDetail | null;
-    onLocateCurrent: () => void
+    onLocateCurrent: () => void,
+    searchText: string,
+    setSearchText: (text: string) => void,
 }) {
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
     const start = useMusicStore((state) => state.start)
@@ -118,6 +130,8 @@ function TopPlaylistInfo({playlist, onLocateCurrent}: {
                     <RoundedIconButton icon={<MyLocation/>} showBorder={true} onClick={() => {
                         onLocateCurrent()
                     }}/>
+                    <Search input={searchText} setInput={setSearchText}/>
+
                 </Box>
             </Box>
         </Box>
@@ -125,10 +139,16 @@ function TopPlaylistInfo({playlist, onLocateCurrent}: {
 }
 
 
-const SeriesList = ({seriesIds, scrollToCurrentRef}: {
-    seriesIds: number[],
-    scrollToCurrentRef?: React.MutableRefObject<() => void>
-}) => {
+const SeriesList = (
+    {
+        seriesIds,
+        scrollToCurrentRef,
+        searchInput = ""
+    }: {
+        seriesIds: number[],
+        scrollToCurrentRef?: React.MutableRefObject<() => void>,
+        searchInput?: string,
+    }) => {
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
     const start = useMusicStore((state) => state.start)
     const currentMusicData = useMusicStore((state) => state.currentMusicData)
@@ -164,7 +184,7 @@ const SeriesList = ({seriesIds, scrollToCurrentRef}: {
             setLoading(false);
         });
 
-    }, [seriesIds, setCurrentMusicIds]);
+    }, [seriesIds]);
 
 
     const fetchDataByIds = async (ids: number[]): Promise<Song[]> => {
@@ -180,7 +200,12 @@ const SeriesList = ({seriesIds, scrollToCurrentRef}: {
                             <Skeleton key={item} variant="rectangular" width={"100%"} height={"3rem"}/>
                         ))}
                     </> : <>
-                        {dataList.map(item =>
+                        {dataList.filter(
+                            item => item.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+                                item.alia.some(alia => alia.includes(searchInput)) ||
+                                item.al.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+                                item.ar.some(artist => artist.name.toLowerCase().includes(searchInput.toLowerCase()))
+                        ).map(item =>
                             (
                                 <ToggleButton value={item.id}
                                               key={item.id}
