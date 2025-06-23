@@ -11,6 +11,7 @@ import {useInView} from "react-intersection-observer";
 import {Menu, MyLocation, PlayArrow} from "@mui/icons-material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
 import {useNavigate} from "react-router-dom";
+import {CustomDialog} from "../components/CustomDialog.tsx";
 
 export function PlaylistView() {
     const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
@@ -41,6 +42,7 @@ function TopPlaylistInfo({playlist, onLocateCurrent}: {
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
     const start = useMusicStore((state) => state.start)
     const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds)
+    const [openDescription, setOpenDescription] = useState<boolean>(false)
     return <>
         <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mb: 2}}>
             <Avatar src={playlist?.coverImgUrl}
@@ -81,11 +83,21 @@ function TopPlaylistInfo({playlist, onLocateCurrent}: {
                                 display: '-webkit-box',
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
-                                WebkitLineClamp: 2, // 限制最大3行
-                            }}>
+                                WebkitLineClamp: 2,
+                                '&:hover': {
+                                    cursor: 'pointer',
+                                    opacity: '0.8',
+                                    transition: 'all 0.1s ease',
+                                }
+                            }}
+                            onClick={() => {
+                                setOpenDescription(true)
+                            }}
+                >
                     {playlist?.description}
                 </Typography>
-
+                <CustomDialog open={openDescription} setOpen={setOpenDescription} title={t('playlist-desc')}
+                              content={playlist?.description || ""}/>
                 <Box sx={{
                     position: "sticky",
                     top: '5rem',

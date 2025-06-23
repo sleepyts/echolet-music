@@ -1,6 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom";
 import type {ArtistData} from "../api/artist/ArtistDetailModel.ts";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getArtistDetail, getArtistHotAlbums, getArtistHotSongs} from "../api/artist/artistApis.ts";
 import {Avatar, Box, Grid, IconButton, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
@@ -14,6 +14,7 @@ import {getTransformScaleStyles} from "../css/CommonStyle.ts";
 import type {HotAlbum} from "../api/artist/ArtistAlbumModel.ts";
 import {fromTimestampToYear} from "../utils/MusicDataUtil.ts";
 import {getAlbumDetail} from "../api/album/albumApis.ts";
+import {CustomDialog} from "../components/CustomDialog.tsx";
 
 export function ArtistView() {
     const artistId = useParams().id;
@@ -196,6 +197,8 @@ export function ArtistsAlbums({artistId}: { artistId: number }) {
 }
 
 export function ArtistInfo({artistDetail, loading}: { artistDetail: ArtistData | undefined, loading: boolean }) {
+    const [openDescription, setOpenDescription] = React.useState(false);
+
     if (loading || !artistDetail) {
         // 骨架屏模式
         return (
@@ -217,7 +220,6 @@ export function ArtistInfo({artistDetail, loading}: { artistDetail: ArtistData |
             </Box>
         );
     }
-
     // 正常内容模式
     return (
         <Box sx={{display: "flex", justifyContent: "flex-start", flexDirection: "row", mb: 2}}>
@@ -242,6 +244,14 @@ export function ArtistInfo({artistDetail, loading}: { artistDetail: ArtistData |
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
                                 WebkitLineClamp: 2,
+                                '&:hover': {
+                                    cursor: 'pointer',
+                                    opacity: '0.8',
+                                    transition: 'all 0.1s ease',
+                                }
+                            }}
+                            onClick={() => {
+                                setOpenDescription(true)
                             }}
                 >
                     {artistDetail.artist.briefDesc}
@@ -249,6 +259,8 @@ export function ArtistInfo({artistDetail, loading}: { artistDetail: ArtistData |
                 <Stack direction="row" spacing={2}>
                     <RoundedIconButton showBorder={true} icon={<FavoriteBorder/>}/>
                 </Stack>
+                <CustomDialog open={openDescription} setOpen={setOpenDescription} title={t('artist-brief-desc')}
+                              content={artistDetail.artist.briefDesc}/>
             </Box>
         </Box>
     );
