@@ -1,17 +1,40 @@
 import {Avatar, Box, Stack} from "@mui/material";
-import {DarkModeOutlined, GitHub, LightModeOutlined, Login, Logout, SettingsOutlined} from '@mui/icons-material';
+import {
+    DarkModeOutlined,
+    GitHub,
+    KeyboardArrowLeft,
+    KeyboardArrowRight,
+    LightModeOutlined,
+    Login,
+    Logout,
+    SettingsOutlined
+} from '@mui/icons-material';
 import {t} from "i18next";
 import {darkTheme, lightTheme} from "../theme/theme.ts";
 import RoundedIconButton from "./RoundedIconButton.tsx";
 import {useUserStore} from "../store/UserStore.ts";
 import {useNavigate} from "react-router-dom";
+import {useNavigationStack} from "../hooks/NavigationHook.ts";
 
 export function Header({theme, setTheme}: any) {
     const userProfile = useUserStore(state => state.userProfile);
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
-    return <Box display={"flex"} p={2} height={"5rem"} position={"sticky"} top={0} zIndex={1000} alignItems={"center"}
+    const {goBack, goForward, canGoBack, canGoForward} = useNavigationStack();
+    return <Box display={"flex"} p={4} height={"5rem"} position={"sticky"} top={0} zIndex={1000} alignItems={"center"}
                 sx={{backgroundColor: 'background.default'}}>
+        <Box display="flex" gap={2}>
+            <RoundedIconButton
+                icon={<KeyboardArrowLeft/>}
+                onClick={goBack}
+                showBorder={canGoBack}
+            />
+            <RoundedIconButton
+                icon={<KeyboardArrowRight/>}
+                onClick={goForward}
+                showBorder={canGoForward}
+            />
+        </Box>
         {/*<Stack spacing={2} direction={"row"}>*/}
         {/*    <Button variant={"outlined"} color="inherit" size={"small"}>Home</Button>*/}
         {/*    <Button variant={"outlined"} color="inherit" size={"small"}>About</Button>*/}
