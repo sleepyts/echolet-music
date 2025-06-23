@@ -129,7 +129,7 @@ export function RightController({canExpand = true}: { canExpand?: boolean }) {
     const [expandDetail, setExpandDetail] = useState<boolean>(false)
     return <>
         <PlayerDetail expand={expandDetail} setExpand={setExpandDetail}/>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} alignItems={"center"}>
             <RoundedIconButton
                 icon={playMode === PlayMode.SHUFFLE ? <Shuffle/> : playMode === PlayMode.REPEAT ? <Repeat/> :
                     <RepeatOne/>} onClick={() => {
