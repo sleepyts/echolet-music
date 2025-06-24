@@ -9,6 +9,7 @@ import {ArtistSongsView} from "../views/ArtistSongsView.tsx";
 import {HomeView} from "../views/HomeVIew.tsx";
 import {SearchView} from "../views/SearchView.tsx";
 import {SearchSongsView} from "../views/SearchSongsView.tsx";
+import {SearchArtistsView} from "../views/SearchArtistsView.tsx";
 
 export const AppRouter = createBrowserRouter([
     {
@@ -50,6 +51,10 @@ export const AppRouter = createBrowserRouter([
             {
                 path: 'search/songs/:text',
                 element: <SearchSongsView/>
+            },
+            {
+                path: 'search/artists/:text',
+                element: <SearchArtistsView/>
             }
         ]
     }

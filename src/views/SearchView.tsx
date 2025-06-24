@@ -41,6 +41,7 @@ function SearchArtistView({searchInput}: { searchInput: string }) {
                 <RoundedIconButton
                     title={t('show-all')}
                     icon={<ReadMore/>}
+                    onClick={() => navigate(`/search/artists/${searchInput}`)}
                 />
             </Box>
 
