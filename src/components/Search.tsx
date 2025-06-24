@@ -1,23 +1,36 @@
 import {Close, SearchRounded} from "@mui/icons-material";
-import {Box, Collapse, InputBase, Paper} from "@mui/material";
+import {Box, Collapse, Input} from "@mui/material";
 import {useState} from "react";
 import RoundedIconButton from "./RoundedIconButton.tsx";
 
 interface SearchProps {
     input: string;
     setInput: (input: string) => void;
+    handleSearch?: () => void;
+    changeWhenInput?: boolean;
 }
 
-export function Search({input, setInput}: SearchProps) {
+export function Search({
+                           input,
+                           setInput, handleSearch = () => {
+    },
+                           changeWhenInput = true,
+                       }: SearchProps) {
     const [expanded, setExpanded] = useState(false);
-
+    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            const val = e.currentTarget.value;
+            setInput(val);
+            handleSearch();
+        }
+    };
     return (
         <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
             <RoundedIconButton onClick={() => setExpanded(!expanded)} icon={expanded ? <Close/> : <SearchRounded/>}>
             </RoundedIconButton>
 
             <Collapse in={expanded} orientation="horizontal" timeout="auto">
-                <Paper
+                <Box
                     sx={{
                         display: "flex",
                         alignItems: "center",
@@ -27,14 +40,19 @@ export function Search({input, setInput}: SearchProps) {
                         transition: "all 0.3s ease",
                     }}
                 >
-                    <InputBase
+                    <Input
                         autoFocus
                         placeholder="搜索内容…"
                         fullWidth
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
+                        onChange={(e) => {
+                            if (changeWhenInput) {
+                                setInput(e.target.value)
+                            }
+                        }}
+                        onKeyDown={onKeyDown}
                     />
-                </Paper>
+                </Box>
             </Collapse>
         </Box>
     );
