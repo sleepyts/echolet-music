@@ -31,7 +31,31 @@ export function LoginView() {
                             const cookie = status.cookie.replaceAll(' HTTPOnly', '');
                             const cookies = cookie.split(';;');
                             cookies.map(cookie => {
+                                // console.log(cookie);
+
+                                // 设置cookie的domain为根域名  不然会出现跨域问题（向根域名发送请求无法携带cookie）
+                                {
+                                    // 获取当前页面域名，比如 sub.example.com
+                                    const hostname = window.location.hostname;
+
+                                    // 获取根域名，比如 example.com
+                                    const domainParts = hostname.split('.');
+                                    let rootDomain = hostname;
+                                    if (domainParts.length > 2) {
+                                        rootDomain = domainParts.slice(-2).join('.');
+                                    }
+
+                                    // 判断 cookie 字符串里是否已经包含 domain，如果没有就加上
+                                    if (!/domain=/i.test(cookie)) {
+                                        cookie += `; domain=${rootDomain}`;
+                                    }
+                                }
+
+
+                                // 设置 cookie
                                 document.cookie = cookie;
+
+                                // 记录到 localStorage
                                 const cookieKeyValue = cookie.split(';')[0].split('=');
                                 localStorage.setItem(`cookie-${cookieKeyValue[0]}`, cookieKeyValue[1]);
                             });
