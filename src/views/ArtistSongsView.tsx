@@ -14,7 +14,7 @@ export function ArtistSongsView() {
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
-    const observerRef = useRef<HTMLDivElement>(null);
+    const observerRef = useRef<HTMLDivElement | null>(null);
     const pageSize = 20;
 
     const fetchSongs = useCallback(async () => {
@@ -56,6 +56,23 @@ export function ArtistSongsView() {
         };
     }, [fetchSongs, hasMore, loading]);
 
+
+    return (
+        <SimpleSonglist songs={songs} loading={loading} observerRef={observerRef}/>
+    );
+}
+
+export interface SimpleSongslistProps {
+    songs: Song[]
+    loading: boolean
+    observerRef: React.RefObject<HTMLDivElement | null>
+}
+
+export function SimpleSonglist({
+                                   songs,
+                                   loading,
+                                   observerRef
+                               }: SimpleSongslistProps) {
     const currentMusicData = useMusicStore(state => state.currentMusicData)
     const start = useMusicStore(state => state.start)
     const setCurrentMusicIds = useMusicStore(state => state.setCurrentMusicIds)
@@ -63,7 +80,7 @@ export function ArtistSongsView() {
 
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState("");
-    return (
+    return <>
         <Box>
 
             <Search input={searchText} setInput={setSearchText}/>
@@ -98,8 +115,10 @@ export function ArtistSongsView() {
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignItems: 'center',
+                                    gap: 2,
                                 }}>
-                                    <Typography pl={1} pr={1} lineHeight={1}>{index + 1}</Typography>
+                                    <Typography  lineHeight={1}>{index + 1}</Typography>
+                                    {/*<LazyAvatar src={item.al.picUrl} size={"3rem"} circled={true}/>*/}
                                     <Typography fontWeight="bold" color={"textPrimary"}
                                                 noWrap
                                                 textTransform="capitalize">
@@ -137,6 +156,5 @@ export function ArtistSongsView() {
                 </Box>
             )}
 
-        </Box>
-    );
+        </Box></>
 }
