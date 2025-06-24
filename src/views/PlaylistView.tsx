@@ -234,7 +234,8 @@ const SeriesList = (
                                         flex: 2,
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        alignItems: 'flex-start'
+                                        alignItems: 'flex-start',
+                                        ml:2,
                                     }}>
                                         <Typography variant="body2" fontWeight="bold" color={"textPrimary"} noWrap
                                                     textTransform="capitalize">
@@ -286,7 +287,11 @@ const SeriesList = (
         ;
 };
 
-export const LazyAvatar = ({src, size = "3rem"}: { src: string, size?: string }) => {
+export const LazyAvatar = ({src, size = "3rem", circled = false}: {
+    src: string,
+    size?: string,
+    circled?: boolean
+}) => {
     const {ref, inView} = useInView({
         triggerOnce: true,
         threshold: 0.1,
@@ -297,13 +302,13 @@ export const LazyAvatar = ({src, size = "3rem"}: { src: string, size?: string })
             {inView ? (
                 <Avatar
                     src={src}
-                    sx={{width: size, height: size, mr: 2}}
-                    variant="rounded"
+                    sx={{width: size, height: size}}
+                    variant={circled ? "circular" : "rounded"}
                 />
             ) : (
                 <Avatar
-                    sx={{width: size, height: size, mr: 2}}
-                    variant="rounded"
+                    sx={{width: size, height: size}}
+                    variant={circled ? "circular" : "rounded"}
                 />
             )}
         </div>

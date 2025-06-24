@@ -217,7 +217,7 @@ function ForYou() {
                             }}
                         >
                             <LazyAvatar src={song.al.picUrl}/>
-                            <Box sx={{width: "100%"}}>
+                            <Box sx={{width: "100%", ml: 2}}>
                                 <Typography
                                     className="scroll-text"
                                     fontSize="0.8rem"
