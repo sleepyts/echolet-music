@@ -28,7 +28,7 @@ function GlobalPlayer() {
             position: "fixed",
             bottom: 0,
             left: 0,
-            width: "100%",
+            width: "100vw",
             height: `6rem`,
             backgroundColor: (theme) => theme.palette.background.paper,
             zIndex: (theme) => theme.zIndex.drawer,

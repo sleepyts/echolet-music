@@ -164,7 +164,7 @@ function ForYou() {
             setLoading(false)
         })
     }, []);
-    const displayedSongs = expanded ? dailySongs : dailySongs.slice(0, 5);
+    const displayedSongs = expanded ? dailySongs : dailySongs.slice(0, 10);
     return <>
         <Box sx={{display: "flex", justifyContent: "flex-start", alignItems: "center", mt: 2, gap: 2}}>
             <Typography variant="h4" fontWeight="bold"
