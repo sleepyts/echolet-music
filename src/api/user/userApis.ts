@@ -1,6 +1,8 @@
 import http from "../http.ts";
 import type {UserAccountResponse} from "./UserAccountResponse.ts";
 import type {QrStatusResponse} from "./QrStatusResponse.ts";
+import type {RecommendPlaylistResponse} from "./RecommendPlaylistModel.ts";
+import type {DailyRecommendSongResponse} from "./DailyRecommentSongModel.ts";
 
 /**
  * 获取当前登陆的用户信息 如果未登录 profile为null
@@ -57,4 +59,22 @@ export async function logout(timestamp: number = Date.now()): Promise<void> {
     return http.get("/logout", {
         params: {timestamp}
     })
+}
+
+/**
+ * 获取推荐歌单
+ * @param limit 歌单数量 默认12
+ * @param timestamp 时间戳 禁止缓存
+ */
+export async function getUserRecommendPlaylist(limit: number = 12, timestamp: number = Date.now()): Promise<RecommendPlaylistResponse> {
+    return http.get("/personalized", {
+        params: {limit, timestamp}
+    })
+}
+
+/**
+ * 获取每日推荐歌曲
+ */
+export async function getUserDailyRecommendSongs(): Promise<DailyRecommendSongResponse> {
+    return http.get("/recommend/songs")
 }
