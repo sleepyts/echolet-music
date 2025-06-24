@@ -79,7 +79,7 @@ export function Header({theme, setTheme}: any) {
                     setTheme(theme == lightTheme ? darkTheme : lightTheme)
                 }}/>
             <RoundedIconButton icon={<SettingsOutlined/>} onClick={() => navigate('/settings')}/>
-            <RoundedIconButton icon={<GitHub/>}/>
+            <RoundedIconButton icon={<GitHub/>} onClick={() => window.open('https://github.com/sleepyts/echolet-music')}/>
         </Stack>
     </Box>
 }
