@@ -10,18 +10,18 @@ import {fromMsToTime, fromTimestampToTime} from "../utils/MusicDataUtil.ts";
 import {useInView} from "react-intersection-observer";
 import {Menu, MyLocation, PlayArrow} from "@mui/icons-material";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {CustomDialog} from "../components/CustomDialog.tsx";
 import {Search} from "../components/Search.tsx";
 
 export function PlaylistView() {
-    const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
+    const currentPlaylistId = useParams().id
     const [currentPlaylistDetail, setCurrentPlaylistDetail] = useState<PlaylistDetail | null>(null);
     const scrollToCurrentRef = React.useRef<() => void>(() => {
     });
     const [searchText, setSearchText] = useState("");
     useEffect(() => {
-        getPlaylistDetail(currentPlaylistId).then((res) => {
+        getPlaylistDetail(Number(currentPlaylistId)).then((res) => {
             setCurrentPlaylistDetail(res.playlist)
         })
     }, [currentPlaylistId]);
