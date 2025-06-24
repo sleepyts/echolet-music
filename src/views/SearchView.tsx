@@ -92,6 +92,7 @@ function SearchMusicView({searchInput}: { searchInput: string }) {
     const setCurrentMusicData = useMusicStore(state => state.setCurrentMusicData);
     const start = useMusicStore(state => state.start);
     const currentMusicData = useMusicStore(state => state.currentMusicData);
+    const navigate = useNavigate();
     useEffect(() => {
         setLoading(true);
         searchSongs(searchInput, 15, 0).then(res => {
@@ -107,6 +108,7 @@ function SearchMusicView({searchInput}: { searchInput: string }) {
                 <RoundedIconButton
                     title={t('show-all')}
                     icon={<ReadMore/>}
+                    onClick={() => navigate(`/search/songs/${searchInput}`)}
                 />
             </Box>
 

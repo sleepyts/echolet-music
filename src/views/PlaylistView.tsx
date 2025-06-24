@@ -303,10 +303,21 @@ const SeriesList = (
                                         alignItems: 'flex-start',
                                         ml: 2,
                                     }}>
-                                        <Typography variant="body2" fontWeight="bold" color={"textPrimary"} noWrap
-                                                    textTransform="capitalize">
-                                            {item.name}
-                                        </Typography>
+                                        <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2}}>
+                                            <Typography fontWeight="bold"
+                                                        color={"textPrimary"}
+                                                        noWrap
+                                                        textTransform="capitalize">
+                                                {item.name}
+                                            </Typography>
+                                            {
+                                                item.alia && item.alia.length > 0 &&
+                                                <Typography variant="body2" color="text.secondary" noWrap>
+                                                    {"( " + item.alia.join(' / ') + " )"}
+                                                </Typography>
+                                            }
+
+                                        </Box>
                                         <Typography variant="body2" color="text.secondary" noWrap
                                                     textTransform="capitalize">
                                             {item.ar.slice(0, 5).map((artist, index) => (

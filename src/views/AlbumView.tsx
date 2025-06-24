@@ -75,11 +75,21 @@ function AlbumSongs({album, albumSongs}: { album: AlbumDetail | undefined, album
                                     alignItems: 'center',
                                 }}>
                                     <Typography pl={1} pr={1} lineHeight={1}>{index + 1}</Typography>
-                                    <Typography fontWeight="bold" color={"textPrimary"}
-                                                noWrap
-                                                textTransform="capitalize">
-                                        {item.name}
-                                    </Typography>
+                                    <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2}}>
+                                        <Typography fontWeight="bold"
+                                                    color={"textPrimary"}
+                                                    noWrap
+                                                    textTransform="capitalize">
+                                            {item.name}
+                                        </Typography>
+                                        {
+                                            item.alia && item.alia.length > 0 &&
+                                            <Typography variant="body2" color="text.secondary" noWrap>
+                                                {"( " + item.alia.join(' / ') + " )"}
+                                            </Typography>
+                                        }
+
+                                    </Box>
                                 </Box>
                                 <Box sx={{textAlign: 'right', width: '100%', alignItems: 'center', flex: 1}}>
                                     <Typography variant="body2" color="textPrimary" noWrap>

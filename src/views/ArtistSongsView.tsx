@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {getArtistSongs} from "../api/artist/artistApis";
 import type {Song} from "../api/track/SongDetailResponse";
 import {Box, CircularProgress, Link, Stack, ToggleButton, Typography} from "@mui/material";
@@ -119,11 +119,21 @@ export function SimpleSonglist({
                                 }}>
                                     <Typography  lineHeight={1}>{index + 1}</Typography>
                                     {/*<LazyAvatar src={item.al.picUrl} size={"3rem"} circled={true}/>*/}
-                                    <Typography fontWeight="bold" color={"textPrimary"}
-                                                noWrap
-                                                textTransform="capitalize">
-                                        {item.name}
-                                    </Typography>
+                                    <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2}}>
+                                        <Typography fontWeight="bold"
+                                                    color={"textPrimary"}
+                                                    noWrap
+                                                    textTransform="capitalize">
+                                            {item.name}
+                                        </Typography>
+                                        {
+                                            item.alia && item.alia.length > 0 &&
+                                            <Typography variant="body2" color="text.secondary" noWrap>
+                                                {"( " + item.alia.join(' / ') + " )"}
+                                            </Typography>
+                                        }
+
+                                    </Box>
                                 </Box>
                                 <Box flex={1}>
                                     <Typography variant="body2" color="textPrimary" noWrap
