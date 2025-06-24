@@ -20,6 +20,7 @@ import {useState} from "react";
 
 export function Header({theme, setTheme}: any) {
     const userProfile = useUserStore(state => state.userProfile);
+    const isLoggedIn = useUserStore(state => state.isLoggedIn);
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
     const {goBack, goForward, canGoBack, canGoForward} = useNavigationStack();
@@ -54,7 +55,7 @@ export function Header({theme, setTheme}: any) {
 
         <Stack spacing={1} direction={"row"} justifyContent={"flex-end"} alignItems={"center"} flex={1}>
             {
-                userProfile !== undefined ?
+                isLoggedIn ?
                     <>
                         <Avatar src={userProfile?.avatarUrl} sx={{width: 30, height: 30}}/>
                     </>
@@ -64,7 +65,7 @@ export function Header({theme, setTheme}: any) {
                     </>
             }
             {
-                userProfile !== undefined && <>
+                isLoggedIn && <>
                     <RoundedIconButton icon={<Logout/>}
                                        onClick={() => logout()}
                                        title={t('logout')}
@@ -79,7 +80,8 @@ export function Header({theme, setTheme}: any) {
                     setTheme(theme == lightTheme ? darkTheme : lightTheme)
                 }}/>
             <RoundedIconButton icon={<SettingsOutlined/>} onClick={() => navigate('/settings')}/>
-            <RoundedIconButton icon={<GitHub/>} onClick={() => window.open('https://github.com/sleepyts/echolet-music')}/>
+            <RoundedIconButton icon={<GitHub/>}
+                               onClick={() => window.open('https://github.com/sleepyts/echolet-music')}/>
         </Stack>
     </Box>
 }

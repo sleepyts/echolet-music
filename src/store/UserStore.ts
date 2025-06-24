@@ -11,7 +11,7 @@ interface UserState {
 
 interface UserActions {
 
-    login: (userProfile: Profile, afterLogin: () => void) => void;
+    login: (userProfile: Profile, afterLogin: () => void) => Promise<void>;
 
     logout: () => void;
 
@@ -26,8 +26,14 @@ export const useUserStore = create<UserState & UserActions, [["zustand/persist",
 
             login: (userProfile, afterLogin = () => {
             }) => {
-                set(() => ({userProfile, isLoggedIn: true}));
-                afterLogin();
+                return new Promise((resolve) => {
+                    set(() => ({userProfile: userProfile, isLoggedIn: true}));
+                    // 使用微任务队列确保回调在状态设置之后
+                    queueMicrotask(() => {
+                        afterLogin();
+                        resolve();
+                    });
+                });
             },
             logout: () => {
                 logout().then(() => {

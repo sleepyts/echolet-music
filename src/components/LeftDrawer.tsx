@@ -26,14 +26,15 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
     const currentPlaylistId = useMusicStore((state) => state.currentPlaylistId)
     const setCurrentPlaylistId = useMusicStore((state) => state.setCurrentPlaylistId)
     const userProfile = useUserStore(state => state.userProfile)
+    const isLoggedIn = useUserStore(state => state.isLoggedIn)
     useEffect(() => {
-        if (userProfile !== undefined) {
+        if (isLoggedIn) {
             getUserPlaylistInfo(userProfile?.userId || 0).then(res => {
                 setPlaylists(res.playlist)
             })
         }
 
-    }, [userProfile]);
+    }, [isLoggedIn]);
     return (
         <Drawer open={open} variant={"permanent"} PaperProps={{
             sx: {
@@ -79,7 +80,7 @@ export function LeftDrawer({open, setOpen}: LeftDrawerProps) {
                 overflow: 'hidden',
                 transition: 'opacity 0.3s ease',
             }}>
-                {userProfile ? (
+                {isLoggedIn ? (
                     playlists.map(playlist => (
                         <ListItem key={playlist.id}
                                   sx={{p: 0}}

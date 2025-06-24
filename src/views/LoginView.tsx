@@ -11,14 +11,20 @@ export function LoginView() {
     const [qrStatus, setQrStatus] = useState(t("loading-qr-code"));
 
     const login = useUserStore(state => state.login)
-
+    const isLoggedIn = useUserStore(state => state.isLoggedIn)
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate("/");
+        }
+    }, [isLoggedIn]);
     useEffect(() => {
         let intervalId: ReturnType<typeof setInterval>;
 
         const startPolling = (key: string) => {
             intervalId = setInterval(async () => {
-                const status = await getQrStatus(key); // 你自己的API
+                const status = await getQrStatus(key);
 
                 if (status.code === 800) {
                     setQrStatus(t('qr-expired'));
@@ -59,9 +65,11 @@ export function LoginView() {
                                 const cookieKeyValue = cookie.split(';')[0].split('=');
                                 localStorage.setItem(`cookie-${cookieKeyValue[0]}`, cookieKeyValue[1]);
                             });
+
+                        }).then(() => {
+                            clearInterval(intervalId);
                         });
-                        navigate("/");
-                        clearInterval(intervalId);
+
                     });
 
                 } else if (status.code === 802) {
