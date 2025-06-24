@@ -6,7 +6,13 @@ const lightTheme = createTheme({
         mode: 'light',
     },
     typography: {
-        fontFamily: `'Noto Sans SC','Poppins' , sans-serif`,
+        fontFamily: [
+            '"Rubik"',
+            '"Noto Sans SC"',
+            'PingFang SC',          // macOS 中文默认
+            'Microsoft YaHei',      // Windows 中文默认
+            'sans-serif',
+        ].join(',')
     },
 });
 
@@ -15,7 +21,13 @@ const darkTheme = createTheme({
         mode: 'dark',
     },
     typography: {
-        fontFamily: `'Noto Sans SC','Poppins' , sans-serif`,
+        fontFamily: [
+            '"Rubik"',
+            '"Noto Sans SC"',
+            'PingFang SC',          // macOS 中文默认
+            'Microsoft YaHei',      // Windows 中文默认
+            'sans-serif',
+        ].join(',')
     },
 });
 
