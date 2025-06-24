@@ -1,54 +1,94 @@
-# React + TypeScript + Vite
+<!-- LOGO -->
+<h1>
+<p align="center">
+  <img src="/public/icon.webp" alt="Logo" width="128">
+  <br> Echolet Music
+</h1>
+  <p align="center">
+    <strong>第三方网易云音乐客户端</strong>
+    <br />
+    ·
+    <a href="https://music.tsukiyo.cn">访问demo</a>
+    ·
+  </p>
+    <img src="/public/docs/img.png" alt="Screenshot">
+    <img src="/public/docs/img_1.png" alt="Screenshot">
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 部署
 
-Currently, two official plugins are available:
+这里介绍示例网站的部署方法。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### api部署
 
-## Expanding the ESLint configuration
+使用NeteaseCloudApi
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+由于目前NeteaseCloudApi已停止维护，无法获取源代码，这里采用docker仍然存在的镜像进行部署。
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1、拉取镜像
+
+``` bash
+docker pull binaryify/netease_cloud_music_api
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2、启动容器
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+``` bash
+docker run -d -p your_port:3000 binaryify/netease_cloud_music_api
 ```
+
+### 使用UnblockNeteaseMusic
+
+UnblockNeteaseMusic是一款基于Chromium内核的网易云音乐解锁客户端，可绕过网易云音乐的防盗链限制。
+
+使用方法：
+
+1、下载并安装[UnblockNeteaseMusic](https://github.com/nondanee/UnblockNeteaseMusic/releases)
+
+2、启动UnblockNeteaseMusic,保存代理地址
+
+### 本体部署
+
+使用vercel
+
+1、fork本项目，通过vercel导入进行部署。
+
+2、在vercel项目设置中，添加环境变量，分别为：
+
+- VITE_API_URL：NeteaseCloudApi的url
+- VITE_API_PROXY: UnblockNeteaseMusic的url,可选，若不设置则不使用UnblockNeteaseMusic
+
+[![Powered by Vercel](https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg)](https://vercel.com/?utm_source=ohmusic&utm_campaign=oss)
+
+## 本地运行
+
+``` bash
+
+# 克隆项目
+git clone https://github.com/tsukiyo/echolet-music.git
+
+# 安装依赖
+cd echolet-music
+pnpm install
+
+# 配置环境变量，编辑.env.development文件 修改运行的api地址对应api服务对应的地址
+
+# 启动NeteaseCloudApi
+pnpm run netease_api:run
+
+# 启动项目
+pnpm run dev
+
+# UnblockNeteaseMusic同上
+```
+
+## TODO
+
+## 创意来源
+
+- [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+- [Spotify](https://www.spotify.com)
+- [YesPlayMusic](https://github.com/qier222/YesPlayMusic)
+- [SoundCloud](https://soundcloud.com)
+
+
