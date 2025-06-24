@@ -1,3 +1,4 @@
+import type {Song} from "../track/SongDetailResponse.ts";
 
 export enum SearchType {
     single = 1,
@@ -34,5 +35,14 @@ export interface SearchArtistResponse {
     result: {
         artistCount: number;
         artists: SearchArtist[];
+    };
+}
+
+export interface SearchSongResponse {
+    code: number;
+    result: {
+        searchQcReminder: any;
+        songCount: number;
+        songs: Song[];
     };
 }

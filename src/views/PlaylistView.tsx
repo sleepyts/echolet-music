@@ -305,12 +305,7 @@ export const LazyAvatar = ({src, size = "3rem", circled = false}: {
                     sx={{width: size, height: size}}
                     variant={circled ? "circular" : "rounded"}
                 />
-            ) : (
-                <Avatar
-                    sx={{width: size, height: size}}
-                    variant={circled ? "circular" : "rounded"}
-                />
-            )}
+            ) : <></>}
         </div>
     );
 };
