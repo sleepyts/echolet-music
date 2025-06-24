@@ -19,11 +19,14 @@ export function PlaylistView() {
     const [currentPlaylistDetail, setCurrentPlaylistDetail] = useState<PlaylistDetail | null>(null);
     const scrollToCurrentRef = React.useRef<() => void>(() => {
     });
+
+    const [loading, setLoading] = useState<boolean>(false);
     const [searchText, setSearchText] = useState("");
     useEffect(() => {
+        setLoading(true);
         getPlaylistDetail(Number(currentPlaylistId)).then((res) => {
             setCurrentPlaylistDetail(res.playlist)
-        })
+        }).finally(() => setLoading(false))
     }, [currentPlaylistId]);
     const seriesIds = useMemo(
         () => currentPlaylistDetail?.trackIds.map(item => item.id) || [],
@@ -34,120 +37,181 @@ export function PlaylistView() {
         <Box sx={{display: 'flex', flexDirection: 'column'}}>
             <Box position="sticky" top={'5rem'} zIndex={1} sx={{backgroundColor: "background.paper", mb: 2}}>
                 <TopPlaylistInfo playlist={currentPlaylistDetail} onLocateCurrent={() => scrollToCurrentRef.current()}
-                                 searchText={searchText} setSearchText={setSearchText}/>
+                                 searchText={searchText} setSearchText={setSearchText} loading={loading}/>
             </Box>
             <SeriesList seriesIds={seriesIds}
                         scrollToCurrentRef={scrollToCurrentRef}
                         searchInput={searchText}
+                        loading={loading}
+                        setLoading={setLoading}
             />
         </Box>
     </>
 }
 
 
-function TopPlaylistInfo({playlist, onLocateCurrent, searchText, setSearchText}: {
+function TopPlaylistInfo({
+                             playlist,
+                             onLocateCurrent,
+                             searchText,
+                             setSearchText,
+                             loading,
+                         }: {
     playlist: PlaylistDetail | null;
-    onLocateCurrent: () => void,
-    searchText: string,
-    setSearchText: (text: string) => void,
+    onLocateCurrent: () => void;
+    searchText: string;
+    setSearchText: (text: string) => void;
+    loading: boolean;
 }) {
-    const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
-    const start = useMusicStore((state) => state.start)
-    const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds)
-    const [openDescription, setOpenDescription] = useState<boolean>(false)
-    return <>
-        <Box sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mb: 2}}>
-            <Avatar src={playlist?.coverImgUrl}
+    const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData);
+    const start = useMusicStore((state) => state.start);
+    const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds);
+    const [openDescription, setOpenDescription] = useState<boolean>(false);
+
+    return (
+        <>
+            <Box sx={{display: "flex", justifyContent: "flex-start", alignItems: "flex-start", mb: 2}}>
+                {loading ? (
+                    <Skeleton variant="rounded" width={240} height={240} sx={{mr: 4}}/>
+                ) : (
+                    <Avatar
+                        src={playlist?.coverImgUrl}
+                        sx={{
+                            width: "15rem",
+                            height: "15rem",
+                            mr: 4,
+                            boxShadow: "3px 3px 4px 0px rgba(0,0,0,0.3)",
+                        }}
+                        variant={"rounded"}
+                    />
+                )}
+                <Box
                     sx={{
-                        width: '15rem',
-                        height: '15rem',
-                        mr: 4,
-                        boxShadow: '3px 3px 4px 0px rgba(0,0,0,0.3)'
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        width: "100%",
+                        height: "15rem",
                     }}
-                    variant={"rounded"}/>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    width: '100%',
-                    height: '15rem',
-                }}
-            >
-                <Typography variant="h5" fontWeight="bold">
-                    {playlist?.name}
-                </Typography>
-
-                <Box>
-                    <Typography>
-                        by
-                        <Link href="#" variant="body2" color={"inherit"} ml={1}
-                              underline={"hover"}>{playlist?.creator.nickname}</Link>
-                    </Typography>
-                    <Typography color="textSecondary" variant={"caption"}>
-                        {t('last-update-at') + " " + fromTimestampToTime(playlist?.updateTime as number) + " · " + playlist?.trackCount + t('song-count')}
-                    </Typography>
-                </Box>
-
-                <Typography variant="caption" mt={1} color={"textSecondary"}
-                            sx={{
-                                display: '-webkit-box',
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                                WebkitLineClamp: 2,
-                                '&:hover': {
-                                    cursor: 'pointer',
-                                    opacity: '0.8',
-                                    transition: 'all 0.1s ease',
-                                }
-                            }}
-                            onClick={() => {
-                                setOpenDescription(true)
-                            }}
                 >
-                    {playlist?.description}
-                </Typography>
-                <CustomDialog open={openDescription} setOpen={setOpenDescription} title={t('playlist-desc')}
-                              content={playlist?.description || ""}/>
-                <Box sx={{
-                    position: "sticky",
-                    top: '5rem',
-                    zIndex: 1,
-                    backgroundColor: "background.paper",
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: 2,
-                    mb: 2,
-                    alignItems: 'center'
-                }}>
-                    <RoundedIconButton icon={<PlayArrow/>} showBorder={true} onClick={() => {
-                        setCurrentMusicIds(playlist?.trackIds.map(item => item.id) || [])
-                        setCurrentMusicData(playlist?.tracks[0])
-                        start()
-                    }}/>
-                    <RoundedIconButton icon={<Menu/>} showBorder={true}/>
-                    <RoundedIconButton icon={<MyLocation/>} showBorder={true} onClick={() => {
-                        onLocateCurrent()
-                    }}/>
-                    <Search input={searchText} setInput={setSearchText}/>
+                    <Typography variant="h5" fontWeight="bold">
+                        {loading ? <Skeleton width={200}/> : playlist?.name}
+                    </Typography>
 
+                    <Box>
+                        <Typography>
+                            {loading ? (
+                                <Skeleton width={120}/>
+                            ) : (
+                                <>
+                                    by
+                                    <Link href="#" variant="body2" color={"inherit"} ml={1} underline={"hover"}>
+                                        {playlist?.creator.nickname}
+                                    </Link>
+                                </>
+                            )}
+                        </Typography>
+                        <Typography color="textSecondary" variant={"caption"}>
+                            {loading ? (
+                                <Skeleton width={180}/>
+                            ) : (
+                                `${t("last-update-at")} ${fromTimestampToTime(
+                                    playlist?.updateTime as number
+                                )} · ${playlist?.trackCount}${t("song-count")}`
+                            )}
+                        </Typography>
+                    </Box>
+
+                    <Typography
+                        variant="caption"
+                        mt={1}
+                        color={"textSecondary"}
+                        sx={{
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                            WebkitLineClamp: 2,
+                            "&:hover": {
+                                cursor: "pointer",
+                                opacity: "0.8",
+                                transition: "all 0.1s ease",
+                            },
+                        }}
+                        onClick={() => {
+                            if (!loading) setOpenDescription(true);
+                        }}
+                    >
+                        {loading ? <Skeleton width={250} height={30}/> : playlist?.description}
+                    </Typography>
+
+                    {!loading && (
+                        <CustomDialog
+                            open={openDescription}
+                            setOpen={setOpenDescription}
+                            title={t("playlist-desc")}
+                            content={playlist?.description || ""}
+                        />
+                    )}
+
+                    <Box
+                        sx={{
+                            position: "sticky",
+                            top: "5rem",
+                            zIndex: 1,
+                            backgroundColor: "background.paper",
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 2,
+                            mb: 2,
+                            alignItems: "center",
+                            mt: 1,
+                        }}
+                    >
+                        {loading ? (
+                            <>
+                                <Skeleton variant="circular" width={40} height={40}/>
+                                <Skeleton variant="circular" width={40} height={40}/>
+                                <Skeleton variant="circular" width={40} height={40}/>
+                                <Skeleton width={200} height={40}/>
+                            </>
+                        ) : (
+                            <>
+                                <RoundedIconButton
+                                    icon={<PlayArrow/>}
+                                    showBorder={true}
+                                    onClick={() => {
+                                        setCurrentMusicIds(playlist?.trackIds.map((item) => item.id) || []);
+                                        setCurrentMusicData(playlist?.tracks[0]);
+                                        start();
+                                    }}
+                                />
+                                <RoundedIconButton icon={<Menu/>} showBorder={true}/>
+                                <RoundedIconButton icon={<MyLocation/>} showBorder={true} onClick={onLocateCurrent}/>
+                                <Search input={searchText} setInput={setSearchText}/>
+                            </>
+                        )}
+                    </Box>
                 </Box>
             </Box>
-        </Box>
-    </>
+        </>
+    );
 }
-
 
 const SeriesList = (
     {
         seriesIds,
         scrollToCurrentRef,
-        searchInput = ""
+        searchInput = "",
+        loading,
+        setLoading,
     }: {
         seriesIds: number[],
         scrollToCurrentRef?: React.MutableRefObject<() => void>,
         searchInput?: string,
+        loading: boolean,
+        setLoading: (loading: boolean) => void,
+
     }) => {
     const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
     const start = useMusicStore((state) => state.start)
@@ -156,7 +220,6 @@ const SeriesList = (
     const [, setVisibleIds] = useState<number[]>([]);
     const [dataList, setDataList] = useState<Song[]>([]);
 
-    const [loading, setLoading] = useState<boolean>(true);
 
     const navigate = useNavigate();
 
@@ -181,9 +244,12 @@ const SeriesList = (
         fetchDataByIds(seriesIds).then(data => {
             setDataList(data);
             setVisibleIds(seriesIds);
-            setLoading(false);
-        });
 
+        }).finally(() => setLoading(false));
+        return () => {
+            setDataList([]);
+            setVisibleIds([]);
+        }
     }, [seriesIds]);
 
 
@@ -235,7 +301,7 @@ const SeriesList = (
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'flex-start',
-                                        ml:2,
+                                        ml: 2,
                                     }}>
                                         <Typography variant="body2" fontWeight="bold" color={"textPrimary"} noWrap
                                                     textTransform="capitalize">
