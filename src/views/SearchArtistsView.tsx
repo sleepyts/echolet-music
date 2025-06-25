@@ -3,9 +3,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {Box, Skeleton, Stack, Typography, Link} from "@mui/material";
 import {searchArtists} from "../api/search/searchApis";
 import type {SearchArtist} from "../api/search/SearchModel";
-import ReadMore from "@mui/icons-material/ReadMore";
 import {useTranslation} from "react-i18next";
-import RoundedIconButton from "../components/RoundedIconButton.tsx";
 import {LazyAvatar} from "./PlaylistView.tsx";
 
 export function SearchArtistsView() {
@@ -14,21 +12,25 @@ export function SearchArtistsView() {
     const {t} = useTranslation();
 
     const [artists, setArtists] = useState<SearchArtist[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const [loading, setLoading] = useState(false);
+
+    const currentPageRef = useRef(1);
+    const loadingRef = useRef(false);
     const observerRef = useRef<HTMLDivElement | null>(null);
     const pageSize = 20;
 
     const fetchArtists = useCallback(async () => {
-        if (!searchText || loading || !hasMore) return;
-        setLoading(true);
+        if (!searchText || loadingRef.current || !hasMore) return;
+
+        loadingRef.current = true;
         try {
-            const res = await searchArtists(searchText, pageSize, (currentPage - 1) * pageSize);
-            if (res.result.artists && res.result.artists.length > 0) {
-                setArtists(prev => [...prev, ...res.result.artists]);
-                setCurrentPage(prev => prev + 1);
-                if (res.result.artists.length < pageSize) {
+            const res = await searchArtists(searchText, pageSize, (currentPageRef.current - 1) * pageSize);
+            const result = res.result.artists || [];
+
+            if (result.length > 0) {
+                setArtists(prev => [...prev, ...result]);
+                currentPageRef.current += 1;
+                if (result.length < pageSize) {
                     setHasMore(false);
                 }
             } else {
@@ -37,43 +39,43 @@ export function SearchArtistsView() {
         } catch (err) {
             console.error("搜索艺术家失败:", err);
         } finally {
-            setLoading(false);
+            loadingRef.current = false;
         }
-    }, [searchText, currentPage, loading, hasMore]);
+    }, [searchText, hasMore]);
 
+    // 监听 searchText 改变时，重置数据并加载第一页
     useEffect(() => {
         if (!searchText) return;
         setArtists([]);
-        setCurrentPage(1);
         setHasMore(true);
-    }, [searchText]);
+        currentPageRef.current = 1;
+        fetchArtists();
+    }, [searchText, fetchArtists]);
 
+    // 只绑定一次 observer
     useEffect(() => {
-        fetchArtists(); // 初始化加载第一页
-    }, [fetchArtists]);
+        const el = observerRef.current;
+        if (!el) return;
 
-    useEffect(() => {
         const observer = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore && !loading) {
+            if (entries[0].isIntersecting) {
                 fetchArtists();
             }
         });
 
-        const el = observerRef.current;
-        if (el) observer.observe(el);
+        observer.observe(el);
 
         return () => {
-            if (el) observer.unobserve(el);
+            observer.disconnect();
         };
-    }, [fetchArtists, hasMore, loading]);
+    }, [fetchArtists]);
 
     return (
         <Box>
             <Box display="flex" flexDirection="row" alignItems="center" mb={2}>
                 <Typography variant="h5" fontWeight="bold" mr={2}>
-                    {t('artist')}
+                    {t('search-artist')} {searchText}
                 </Typography>
-                <RoundedIconButton title={t('show-all')} icon={<ReadMore />} />
             </Box>
 
             <Stack direction="row" spacing={2} flexWrap="wrap">
@@ -106,7 +108,7 @@ export function SearchArtistsView() {
                     </Box>
                 ))}
 
-                {loading &&
+                {loadingRef.current &&
                     [...Array(6)].map((_, index) => (
                         <Box key={index} display="flex" flexDirection="column" alignItems="center" width={240} mb={4}>
                             <Skeleton variant="circular" width={240} height={240} />
@@ -116,7 +118,7 @@ export function SearchArtistsView() {
             </Stack>
 
             {/* Intersection Observer 触发器 */}
-            {hasMore && <div ref={observerRef} style={{ height: 1 }} />}
+            {hasMore && <div ref={observerRef} style={{ height: 80 }} />}
         </Box>
     );
 }

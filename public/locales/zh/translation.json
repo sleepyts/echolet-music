@@ -38,6 +38,8 @@
   "artist": "歌手",
   "song": "歌曲",
   "search-song": "搜索歌曲",
+  "search-artist": "搜索歌手",
+  "search-playlist": "搜索歌单",
   "playlist": "歌单",
   "language": "语言",
   "zh-CN": "简体中文",
