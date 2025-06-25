@@ -373,12 +373,12 @@ export const LazyAvatar = ({src, size = "3rem", circled = false}: {
         triggerOnce: true,
         threshold: 0.1,
     });
-
+    const picSize = Number(size.replace("rem", "")) * Number(getComputedStyle(document.documentElement).fontSize.replace("px", ""));
     return (
         <div ref={ref}>
             {inView ? (
                 <Avatar
-                    src={src}
+                    src={src + `?param=${picSize}y${picSize}`}
                     sx={{width: size, height: size}}
                     variant={circled ? "circular" : "rounded"}
                 />
