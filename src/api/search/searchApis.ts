@@ -1,5 +1,5 @@
 import http from "../http.ts";
-import type {SearchArtistResponse, SearchSongResponse} from "./SearchModel.ts";
+import type {SearchArtistResponse, SearchPlaylistResponse, SearchSongResponse} from "./SearchModel.ts";
 
 
 /**
@@ -24,6 +24,19 @@ export async function searchArtists(keywords: string, limit: number | undefined 
  * @param type
  */
 export async function searchSongs(keywords: string, limit: number | undefined = 30, offset: number | undefined = 0, type: number = 1): Promise<SearchSongResponse> {
+    return http.get("/cloudsearch", {
+        params: {keywords, limit, offset, type},
+    })
+}
+
+/**
+ * 搜索歌单
+ * @param keywords
+ * @param limit
+ * @param offset
+ * @param type
+ */
+export async function searchPlaylist(keywords: string, limit: number | undefined = 30, offset: number | undefined = 0, type: number = 1000): Promise<SearchPlaylistResponse> {
     return http.get("/cloudsearch", {
         params: {keywords, limit, offset, type},
     })

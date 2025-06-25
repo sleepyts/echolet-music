@@ -46,3 +46,42 @@ export interface SearchSongResponse {
         songs: Song[];
     };
 }
+
+export interface SearchPlaylistResponse {
+    code: number;
+    result: {
+        searchQcReminder: null;
+        playlists: SearchPlaylist[];
+        playlistCount: number;
+    }
+}
+
+export interface SearchPlaylist {
+    id: number;
+    name: string;
+    coverImgUrl: string;
+    creator: Creator;
+    subscribed: boolean;
+    trackCount: number;
+    userId: number;
+    playCount: number;
+    bookCount: number;
+    specialType: number;
+    officialTags: string[] | null;
+    action: any;
+    actionType: any;
+    recommendText: string | null;
+    score: number | null;
+    description: string;
+    highQuality: boolean;
+}
+
+export interface Creator {
+    nickname: string;
+    userId: number;
+    userType: number;
+    avatarUrl: string | null;
+    authStatus: number;
+    expertTags: string[] | null;
+    experts: any;
+}

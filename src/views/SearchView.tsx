@@ -1,7 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import type {SearchArtist} from "../api/search/SearchModel.ts";
-import {searchArtists, searchSongs} from "../api/search/searchApis.ts";
+import type {SearchArtist, SearchPlaylist} from "../api/search/SearchModel.ts";
+import {searchArtists, searchPlaylist, searchSongs} from "../api/search/searchApis.ts";
 import {Box, Grid, Link, Skeleton, Stack, ToggleButton, Typography} from "@mui/material";
 import {t} from "i18next";
 import {LazyAvatar} from "./PlaylistView.tsx";
@@ -10,12 +10,14 @@ import {ReadMore} from "@mui/icons-material";
 import type {Song} from "../api/track/SongDetailResponse.ts";
 import {getTransformScaleStyles} from "../css/CommonStyle.ts";
 import {useMusicStore} from "../store/MusicStore.ts";
+import {RoundedPlaylist} from "../components/RoundedPlaylist.tsx";
 
 export function SearchView() {
     const searchInput = useParams().text || '';
     return <>
         <SearchArtistView searchInput={searchInput}/>
         <SearchMusicView searchInput={searchInput}/>
+        <SearchPlaylistView searchInput={searchInput}/>
     </>
 }
 
@@ -186,5 +188,39 @@ function SearchMusicView({searchInput}: { searchInput: string }) {
                 )}
             </Grid>
         </Box>
+    </>
+}
+
+function SearchPlaylistView({searchInput}: { searchInput: string }) {
+    const [searchedPlaylist, setSearchedPlaylist] = useState<SearchPlaylist[]>([]);
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        setLoading(true);
+        searchPlaylist(searchInput, 12, 0).then(res => {
+            setSearchedPlaylist(res.result.playlists)
+        }).finally(() => setLoading(false));
+
+    }, [searchInput]);
+
+    const navigate = useNavigate();
+    return <>
+        {
+            loading ? <>
+            </> : <Box mt={4}>
+                <Box display="flex" flexDirection="row" alignItems="center" mb={2}>
+                    <Typography variant="h5" fontWeight="bold" mr={2}>
+                        {t('playlist')}
+                    </Typography>
+                    <RoundedIconButton
+                        title={t('show-all')}
+                        icon={<ReadMore/>}
+                        onClick={() => navigate(`/search/playlists/${searchInput}`)}
+                    />
+                </Box>
+                <RoundedPlaylist playlists={searchedPlaylist}/>
+            </Box>
+
+
+        }
     </>
 }
