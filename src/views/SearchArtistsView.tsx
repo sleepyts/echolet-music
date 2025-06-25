@@ -50,7 +50,7 @@ export function SearchArtistsView() {
         setHasMore(true);
         currentPageRef.current = 1;
         fetchArtists();
-    }, [searchText, fetchArtists]);
+    }, [searchText]);
 
     // 只绑定一次 observer
     useEffect(() => {

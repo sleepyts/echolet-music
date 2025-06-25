@@ -49,7 +49,7 @@ export function SearchPlaylistsView() {
         setHasMore(true);
         currentPageRef.current = 1;
         fetchPlaylists(); // 初始化加载第一页
-    }, [searchText, fetchPlaylists]);
+    }, [searchText]);
 
     // 只绑定一次 observer，不依赖 fetchPlaylists
     useEffect(() => {
