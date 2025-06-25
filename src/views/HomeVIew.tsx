@@ -1,17 +1,15 @@
-import {Box, Grid, IconButton, Link, Skeleton, ToggleButton, Typography} from "@mui/material";
+import {Box, Grid, Skeleton, ToggleButton, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import type {RecommendPlaylist} from "../api/user/RecommendPlaylistModel.ts";
 import {getUserDailyRecommendSongs, getUserRecommendPlaylist} from "../api/user/userApis.ts";
 import {LazyAvatar} from "./PlaylistView.tsx";
-import {ExpandLess, ExpandMore, PlayArrow} from "@mui/icons-material";
+import {ExpandLess, ExpandMore} from "@mui/icons-material";
 import {t} from "i18next";
-import {useNavigate} from "react-router-dom";
-import {getPlaylistDetail} from "../api/playlist/playListApis.ts";
 import {useMusicStore} from "../store/MusicStore.ts";
-import {getSongDetail} from "../api/track/songApis.ts";
 import type {Song} from "../api/track/SongDetailResponse.ts";
 import {getTransformScaleStyles} from "../css/CommonStyle.ts";
 import RoundedIconButton from "../components/RoundedIconButton.tsx";
+import {RoundedPlaylist} from "../components/RoundedPlaylist.tsx";
 
 export function HomeView() {
 
@@ -26,9 +24,6 @@ export function HomeView() {
 
 function RecommendPlaylist() {
     const [recommendPlaylist, setRecommendPlaylist] = useState<RecommendPlaylist[]>([])
-    const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds)
-    const setCurrentMusicData = useMusicStore((state) => state.setCurrentMusicData)
-    const start = useMusicStore((state) => state.start)
     const [loading, setLoading] = useState(false)
     useEffect(() => {
         setLoading(true)
@@ -38,108 +33,11 @@ function RecommendPlaylist() {
             setLoading(false)
         })
     }, []);
-    const navigate = useNavigate();
     return <>
         {
             loading ? <></> : <>
                 <Typography variant="h4" fontWeight="bold" mb={2}>{t('recomment-playlist')}</Typography>
-
-                <Grid container spacing={2}>
-
-                    {
-                        recommendPlaylist.map((playlist: RecommendPlaylist) => {
-                            return <>
-                                <Grid key={playlist.id} width={'15%'} component={"div"}>
-                                    <Box>
-                                        <Box
-                                            sx={(theme) => ({
-                                                width: '15rem',
-                                                position: 'relative', // 关键！让播放按钮定位生效
-                                                borderRadius: 2,
-                                                overflow: 'hidden',
-                                                transition: 'all 0.3s',
-                                                backgroundColor:
-                                                    theme.palette.mode === 'dark'
-                                                        ? theme.palette.grey[800]
-                                                        : theme.palette.grey[100],
-                                                boxShadow:
-                                                    theme.palette.mode === 'dark'
-                                                        ? '0 0 18px rgba(255,255,255,0.1)'
-                                                        : '0 6px 24px rgba(0,0,0,0.15)',
-
-                                                '&:hover': {
-                                                    boxShadow:
-                                                        theme.palette.mode === 'dark'
-                                                            ? '0 0 32px rgba(255,255,255,0.2)'
-                                                            : '0 12px 36px rgba(0,0,0,0.25)',
-                                                    cursor: 'pointer',
-
-                                                    // 播放按钮显现
-                                                    '& .hover-play-button': {
-                                                        opacity: 1,
-                                                        transform: 'translate(-50%, -50%) scale(1)',
-                                                    },
-                                                },
-                                            })}
-                                        >
-                                            {/* 图片组件 */}
-                                            <Box onClick={() => {
-                                                navigate(`/playlist/${playlist.id}`)
-                                            }}>
-                                                <LazyAvatar src={playlist.picUrl || ""} size={'15rem'}/>
-
-                                            </Box>
-
-                                            {/* 播放按钮 */}
-                                            <IconButton
-                                                className="hover-play-button"
-                                                sx={{
-                                                    position: 'absolute',
-                                                    top: '50%',
-                                                    left: '50%',
-                                                    transform: 'translate(-50%, -50%) scale(0.9)',
-                                                    opacity: 0,
-                                                    color: '#fff',
-                                                    backgroundColor: 'rgba(122,119,119,0.6)',
-                                                    transition: 'all 0.3s ease',
-                                                    zIndex: 2,
-                                                    '&:hover': {
-                                                        backgroundColor: 'rgba(45,44,44,0.8)',
-                                                    },
-                                                }}
-                                                onClick={async () => {
-                                                    const res = await getPlaylistDetail(playlist.id);
-                                                    setCurrentMusicIds(res.playlist.trackIds.map(item => item.id));
-
-                                                    const songRes = await getSongDetail([res.playlist.trackIds[0].id]);
-                                                    setCurrentMusicData(songRes.songs[0]);
-                                                    start();
-                                                }}
-                                            >
-                                                <PlayArrow fontSize="large"/>
-                                            </IconButton>
-                                        </Box>
-
-                                        <Box mt={2}>
-                                            <Typography variant="subtitle2" fontWeight="bold">
-                                                <Link
-                                                    underline="hover"
-                                                    color="textPrimary"
-                                                    sx={{'&:hover': {cursor: 'pointer'}}}
-                                                    onClick={() => {
-                                                        navigate(`/playlist/${playlist.id}`)
-                                                    }}
-                                                >
-                                                    {playlist.name}
-                                                </Link>
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                            </>
-                        })
-                    }
-                </Grid>
+                <RoundedPlaylist playlists={recommendPlaylist}/>
             </>
 
 
