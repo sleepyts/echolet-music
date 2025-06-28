@@ -83,7 +83,7 @@ export function SimpleSonglist({
     return <>
         <Box>
 
-            <Search input={searchText} setInput={setSearchText}/>
+            <Search setInput={setSearchText}/>
             <Stack direction="column" spacing={1} mt={2}>
                 {
                     songs.filter(song => song.name.toLowerCase().includes(searchText.toLowerCase()) || song.al.name.toLowerCase().includes(searchText.toLowerCase())).map((item, index) =>
@@ -117,7 +117,7 @@ export function SimpleSonglist({
                                     alignItems: 'center',
                                     gap: 2,
                                 }}>
-                                    <Typography  lineHeight={1}>{index + 1}</Typography>
+                                    <Typography lineHeight={1}>{index + 1}</Typography>
                                     {/*<LazyAvatar src={item.al.picUrl} size={"3rem"} circled={true}/>*/}
                                     <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2}}>
                                         <Typography fontWeight="bold"
