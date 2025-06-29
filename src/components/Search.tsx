@@ -25,7 +25,6 @@ export function Search({ setInput, handleSearch = () => {} }: SearchProps) {
     timer = setTimeout(() => {
       const val = text;
       setInput(val);
-      handleSearch();
     }, 500);
   };
   return (
