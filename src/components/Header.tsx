@@ -50,6 +50,7 @@ export function Header({ theme, setTheme }: any) {
         <Search
           setInput={setSearch}
           handleSearch={() => navigate(`/search/${search}`)}
+          changeImediatly={true}
         />
       </Box>
       <Stack

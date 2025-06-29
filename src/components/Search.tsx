@@ -6,9 +6,15 @@ import RoundedIconButton from "./RoundedIconButton.tsx";
 interface SearchProps {
   setInput: (input: string) => void;
   handleSearch?: () => void;
+
+  changeImediatly?: boolean;
 }
 
-export function Search({ setInput, handleSearch = () => {} }: SearchProps) {
+export function Search({
+  setInput,
+  handleSearch = () => {},
+  changeImediatly = false,
+}: SearchProps) {
   const [expanded, setExpanded] = useState(false);
   const [text, setText] = useState("");
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -20,13 +26,17 @@ export function Search({ setInput, handleSearch = () => {} }: SearchProps) {
   };
 
   let timer: NodeJS.Timeout | null = null;
-  const updateInput = () => {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      const val = text;
-      setInput(val);
-      handleSearch();
-    }, 500);
+  const updateInput = (text: string) => {
+    if (!changeImediatly) {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        const val = text;
+        setInput(val);
+        // handleSearch();
+      }, 500);
+    } else {
+      setInput(text);
+    }
   };
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -53,7 +63,7 @@ export function Search({ setInput, handleSearch = () => {} }: SearchProps) {
             value={text}
             onChange={(e) => {
               setText(e.target.value);
-              updateInput();
+              updateInput(e.target.value);
             }}
             onKeyDown={onKeyDown}
           />
