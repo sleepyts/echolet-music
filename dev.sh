@@ -1,0 +1,1 @@
+pnpm netease_api:run & pnpm dev

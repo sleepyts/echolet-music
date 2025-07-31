@@ -21,6 +21,8 @@ import RoundedIconButton from "../components/RoundedIconButton.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { CustomDialog } from "../components/CustomDialog.tsx";
 import { Search } from "../components/Search.tsx";
+import LongSongCard from "../components/long-song-card/index.tsx";
+import { it } from "node:test";
 
 export function PlaylistView() {
   const currentPlaylistId = useParams().id;
@@ -333,124 +335,7 @@ const SeriesList = ({
                   ),
               )
               .map((item) => (
-                <ToggleButton
-                  value={item.id}
-                  key={item.id}
-                  ref={(el) => {
-                    itemRefs.current[item.id] = el;
-                  }}
-                  sx={[
-                    {
-                      border: "none",
-                      justifyContent: "start",
-                      display: "flex",
-                    },
-                  ]}
-                  size={"small"}
-                  selected={currentMusicData?.id === item.id}
-                  onDoubleClick={async () => {
-                    setCurrentMusicIds(seriesIds);
-                    setCurrentMusicData(item);
-                    start();
-                  }}
-                >
-                  <LazyAvatar src={item.al.picUrl} />
-                  <Box
-                    sx={{
-                      flex: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      ml: 2,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 2,
-                      }}
-                    >
-                      <Typography
-                        fontWeight="bold"
-                        color={"textPrimary"}
-                        noWrap
-                        textTransform="capitalize"
-                      >
-                        {item.name}
-                      </Typography>
-                      {item.alia && item.alia.length > 0 && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          noWrap
-                        >
-                          {"( " + item.alia.join(" / ") + " )"}
-                        </Typography>
-                      )}
-                    </Box>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      noWrap
-                      textTransform="capitalize"
-                    >
-                      {item.ar.slice(0, 5).map((artist, index) => (
-                        <span key={artist.id || artist.name}>
-                          <Link
-                            underline="hover"
-                            color="textSecondary"
-                            variant="caption"
-                            onClick={() => {
-                              navigate("/artist/" + artist.id);
-                            }}
-                          >
-                            {artist.name}
-                          </Link>
-                          {index !== 4 && " / "}
-                        </span>
-                      ))}
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      alignItems: "flex-start",
-                      justifyContent: "flex-start",
-                      flex: 1.5,
-                    }}
-                  >
-                    <Typography
-                      variant="body2"
-                      color="textPrimary"
-                      noWrap
-                      textTransform="capitalize"
-                    >
-                      <Link
-                        underline="hover"
-                        color="textPrimary"
-                        variant="caption"
-                        onClick={() => {
-                          navigate("/album/" + item.al.id);
-                        }}
-                      >
-                        {item.al.name}
-                      </Link>
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      textAlign: "right",
-                      width: "100%",
-                      alignItems: "center",
-                      flex: 1,
-                    }}
-                  >
-                    <Typography variant="body2" color="textPrimary" noWrap>
-                      {fromMsToTime(item.dt)}
-                    </Typography>
-                  </Box>
-                </ToggleButton>
+                <LongSongCard song={item} musicIds={seriesIds} />
               ))}
           </>
         )}

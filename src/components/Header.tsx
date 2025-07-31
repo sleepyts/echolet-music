@@ -1,7 +1,8 @@
-import { Avatar, Box, Button, Stack } from "@mui/material";
+import { Avatar, Box, Stack } from "@mui/material";
 import {
   DarkModeOutlined,
   GitHub,
+  HomeOutlined,
   KeyboardArrowLeft,
   KeyboardArrowRight,
   LightModeOutlined,
@@ -53,77 +54,65 @@ export function Header({ theme, setTheme }: any) {
           changeImediatly={true}
         />
       </Box>
-      <Stack
-        spacing={2}
-        direction={"row"}
-        sx={{
-          position: "absolute",
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
-      >
-        <Button
-          variant={"outlined"}
-          color="inherit"
-          size={"small"}
-          onClick={() => navigate("/")}
-        >
-          {t("home")}
-        </Button>
-      </Stack>
 
-      <Stack
-        spacing={1}
-        direction={"row"}
-        justifyContent={"flex-end"}
-        alignItems={"center"}
-        flex={1}
-      >
-        {isLoggedIn ? (
-          <>
-            <Avatar
-              src={userProfile?.avatarUrl}
-              sx={{ width: 30, height: 30 }}
-            />
-          </>
-        ) : (
-          <>
-            <RoundedIconButton
-              icon={<Login />}
-              title={t("login")}
-              onClick={() => navigate("/login")}
-            />
-          </>
-        )}
-        {isLoggedIn && (
-          <>
-            <RoundedIconButton
-              icon={<Logout />}
-              onClick={() => logout()}
-              title={t("logout")}
-            />
-          </>
-        )}
+      <Box display={"flex"} gap={10}>
         <RoundedIconButton
-          title={theme == lightTheme ? t("dark-mode") : t("light-mode")}
-          icon={
-            theme == lightTheme ? <DarkModeOutlined /> : <LightModeOutlined />
-          }
-          onClick={() => {
-            setTheme(theme == lightTheme ? darkTheme : lightTheme);
-          }}
-        />
-        <RoundedIconButton
-          icon={<SettingsOutlined />}
-          onClick={() => navigate("/settings")}
-        />
-        <RoundedIconButton
-          icon={<GitHub />}
-          onClick={() =>
-            window.open("https://github.com/sleepyts/echolet-music")
-          }
-        />
-      </Stack>
+          icon={<HomeOutlined />}
+          onClick={() => navigate("/")}
+        ></RoundedIconButton>
+        <Stack
+          spacing={1}
+          direction={"row"}
+          justifyContent={"flex-end"}
+          alignItems={"center"}
+          flex={1}
+        >
+          {isLoggedIn ? (
+            <>
+              <Avatar
+                src={userProfile?.avatarUrl}
+                sx={{ width: 30, height: 30 }}
+              />
+            </>
+          ) : (
+            <>
+              <RoundedIconButton
+                icon={<Login />}
+                title={t("login")}
+                onClick={() => navigate("/login")}
+              />
+            </>
+          )}
+          {isLoggedIn && (
+            <>
+              <RoundedIconButton
+                icon={<Logout />}
+                onClick={() => logout()}
+                title={t("logout")}
+              />
+            </>
+          )}
+          <RoundedIconButton
+            title={theme == lightTheme ? t("dark-mode") : t("light-mode")}
+            icon={
+              theme == lightTheme ? <DarkModeOutlined /> : <LightModeOutlined />
+            }
+            onClick={() => {
+              setTheme(theme == lightTheme ? darkTheme : lightTheme);
+            }}
+          />
+          <RoundedIconButton
+            icon={<SettingsOutlined />}
+            onClick={() => navigate("/settings")}
+          />
+          <RoundedIconButton
+            icon={<GitHub />}
+            onClick={() =>
+              window.open("https://github.com/sleepyts/echolet-music")
+            }
+          />
+        </Stack>
+      </Box>
     </Box>
   );
 }
