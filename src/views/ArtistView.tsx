@@ -69,7 +69,7 @@ export function ArtistView() {
 export function ArtistsAlbums({ artistId }: { artistId: number }) {
   const [albums, setAlbums] = useState<HotAlbum[]>([]);
   const setCurrentMusicData = useMusicStore(
-    (state) => state.setCurrentMusicData
+    (state) => state.setCurrentMusicData,
   );
   const start = useMusicStore((state) => state.start);
   const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds);
@@ -136,7 +136,7 @@ export function ArtistsAlbums({ artistId }: { artistId: number }) {
                 <Box
                   sx={(theme) => ({
                     width: "15rem",
-                    position: "relative", // 关键！让播放按钮定位生效
+                    position: "relative",
                     borderRadius: 2,
                     overflow: "hidden",
                     transition: "all 0.3s",
@@ -221,8 +221,8 @@ export function ArtistsAlbums({ artistId }: { artistId: number }) {
                     {album.size >= 8
                       ? t("album")
                       : album.size >= 2
-                      ? t("ep")
-                      : t("single")}
+                        ? t("ep")
+                        : t("single")}
                     -{fromTimestampToYear(album.publishTime)}
                   </Typography>
                 </Box>
@@ -359,9 +359,8 @@ function ArtistHotSong({ artistId }: { artistId: number | undefined }) {
 
   const currentMusicData = useMusicStore((state) => state.currentMusicData);
   const setCurrentMusicData = useMusicStore(
-    (state) => state.setCurrentMusicData
+    (state) => state.setCurrentMusicData,
   );
-  const setCurrentMusicIds = useMusicStore((state) => state.setCurrentMusicIds);
   const start = useMusicStore((state) => state.start);
 
   const [songLoading, setSongLoading] = useState<boolean>(true);
@@ -377,7 +376,6 @@ function ArtistHotSong({ artistId }: { artistId: number | undefined }) {
           return;
         }
         const ids = res.map((song) => song.id);
-        setCurrentMusicIds(ids);
         getSongDetail(ids)
           .then((res) => {
             setHotSongs(res.songs);

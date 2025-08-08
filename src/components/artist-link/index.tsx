@@ -27,7 +27,7 @@ const ArtistLink: FC<ArtistLinkProps> = ({ artists, maxSize = 5 }) => {
         {artists
           .slice(0, Math.min(maxSize, artists.length))
           .map((artist, index, array) => (
-            <span key={artist.id || artist.name}>
+            <span key={artist.id || artist.name} title={artist.name}>
               <Link
                 underline="hover"
                 color="textSecondary"
